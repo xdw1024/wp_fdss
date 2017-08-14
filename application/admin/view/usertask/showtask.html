@@ -1,0 +1,74 @@
+<form id="pagerForm"  rel="pagerForm" method="post" action="">
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+    <input type="hidden" name="keyword" value="{$keyword}"/>
+    <input type="hidden" name="userid" value="{$userid}"/>
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="__ADMIN__UserTask/showtask" onsubmit="return navTabSearch(this);">
+        <input type="hidden" name="userid" value="{$userid}"/>
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>任务名称:</label>
+                    <input class="textInput" name="keyword" value="{$keyword}" type="text">
+                </li>
+                <div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+
+    <table class="table" layoutH="118" targetType="navTab" width="100%">
+        <thead>
+        <tr>
+            <!--<th width="30"><input type="checkbox" class="checkboxCtrl" group="name" /></th>-->
+            <th></th>
+            <th orderfield="name">任务名称</th>
+            <th orderfield="addr">任务内容</th>
+            <th orderfield="type">完成状况</th>
+            <th orderfield="info">任务详情</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="info" id="data" key="k"}
+        <tr>
+            <td>{$k+$numPerPage*($currentPage-1)}</td>
+            <td>{$data['name']}</td>
+            <td>{$data['describle']}</td>
+            <td>{if $data['complete']=="1"}已完成{else}未完成{/if}</td>
+            <td><a href="__ADMIN__Usertask/taskinfo?taskid={$data['task_id']}&userid={$userid}" target="navTab" rel="taskinfo" title="{$data['name']}任务详情">查看</a></td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar">
+        <div class="pages">
+            <span>每页</span>
+
+            <select  class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+    </div>
+</div>
+<script>
+    $('.combox').val('{$numPerPage}');
+</script>

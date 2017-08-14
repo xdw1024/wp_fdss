@@ -1,0 +1,131 @@
+<style>
+/*${demo.css}*/
+</style>
+<script src="__DWZ__js/jquery-2.1.4.min.js" type="text/javascript"></script>
+<script src="__HIGHCHARTS__js/highcharts.js" type="text/javascript"></script>
+
+<script src="__HIGHCHARTS__js/modules/data.js" type="text/javascript"></script>
+<script src="__HIGHCHARTS__js/modules/drilldown.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function () {
+// Create the chart
+    $('#chartHolder').highcharts({
+chart: {
+    type: 'pie'
+},
+title: {
+    text: '检查状况概览'
+},
+subtitle: {
+    text: '单击图片相应区域查看具体情况'
+},
+plotOptions: {
+series: {
+dataLabels: {
+    enabled: true,
+    format: '{point.name}: {point.y}'
+}
+}
+},
+
+tooltip: {
+    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.percentage:.2f}%</b><br/>'
+},
+series: [{
+name: '监管对象',
+colorByPoint: true,
+data: [{
+    name: '餐饮',
+    y: 1000,
+    drilldown: 'restaurant'
+}, {
+    name: '医药制造',
+    y: 300,
+    drilldown: 'medicinemake'
+}, {
+    name: '医药销售',
+    y: 700,
+    drilldown: 'medicinesale'
+}, {
+    name: '食品制造',
+    y: 500,
+    drilldown: 'foodmake'
+}, {
+    name: '食品销售',
+    y: 1500,
+    drilldown: 'foodsale'
+}, {
+    name: '其他',
+    y: 1000,
+    drilldown: 'other'
+}]
+}],
+drilldown: {
+series: [{
+    name: '餐饮',
+    id: 'restaurant',
+    data: [
+    ['未检查', 500],
+    ['合格', 200],
+    ['优秀', 100],
+    ['良好', 100],
+    ['不合格', 100]
+    ]
+}, {
+    name: '医药制造',
+    id: 'medicinemake',
+    data: [
+        ['未检查', 50],
+        ['合格', 100],
+        ['优秀', 50],
+        ['良好', 70],
+        ['不合格', 30]
+    ]
+}, {
+    name: '医药销售',
+    id: 'medicinesale',
+    data: [
+        ['未检查', 150],
+        ['合格', 200],
+        ['优秀', 150],
+        ['良好', 150],
+        ['不合格', 50]
+    ]
+}, {
+    name: '食品制造',
+    id: 'foodmake',
+    data: [
+        ['未检查', 150],
+        ['合格', 100],
+        ['优秀', 50],
+        ['良好', 150],
+        ['不合格', 50]
+    ]
+}, {
+    name: '食品销售',
+    id: 'foodsale',
+    data: [
+        ['未检查', 350],
+        ['合格', 700],
+        ['优秀', 150],
+        ['良好', 150],
+        ['不合格', 150]
+    ]
+}, {
+    name: '其它',
+    id: 'other',
+    data: [
+        ['未检查', 150],
+        ['合格', 500],
+        ['优秀', 50],
+        ['良好', 150],
+        ['不合格', 150]
+    ]
+}]
+}
+});
+});
+</script>
+<!--script src="__HIGHCHARTS__js/modules/exporting.js" type="text/javascript"></script-->
+<div id="chartHolder"></div>

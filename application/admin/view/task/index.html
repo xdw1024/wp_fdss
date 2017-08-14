@@ -1,0 +1,145 @@
+<form id="pagerForm" method="post" action="">
+    <input type="hidden" name="status" value="${param.status}">
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+    <input type="hidden" name="start_time" value="{$start_time}" />
+    <input type="hidden" name="end_time" value="{$end_time}" />
+    <input type="hidden" name="complete" value="{$complete}" />
+</form>
+
+<div id="task-index">
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" action="__ADMIN__Task/index" method="post">
+        <div class="searchBar">
+            <!--<table class="searchContent">
+                <tr>
+                    <td>
+                        任务：<input type="text" name="keyword" value="{$keyword}"/>
+                    </td>
+                    <td>
+                        <select class="combox" id="complete" name="complete">
+                            <option value="">完成情况</option>
+                            <option value="已完成">已完成</option>
+                            <option value="未完成">未完成</option>
+                        </select>
+                    </td>
+                    <td>
+                            <td>开始时间：</td>
+                            <td>
+                                <input name="taskstart_time" id="taskstart_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{$start_time}" />
+                                <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                            </td>
+                    </td>
+                    <td>
+                    <td>截止时间：</td>
+                    <td>
+                        <input name="taskend_time" id="taskend_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{$end_time}" />
+                        <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                    </td>
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>-->
+            <div class="searchbar">任务：<input type="text" name="keyword" value="{$keyword}"/></div>
+            <div class="searchbar">
+            	<select class="combox" id="complete" name="complete">
+		            <option value="">完成情况</option>
+		            <option value="已完成">已完成</option>
+		            <option value="未完成">未完成</option>
+		        </select>
+		    </div>
+            <div class="searchbar">
+            	<span class="label-title">开始时间：</span>
+            	<a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                <input name="taskstart_time" id="taskstart_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{$start_time}" />                
+            </div>
+            <div class="searchbar"> 
+            	<span class="label-title">截止时间：</span>
+            	<a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                <input name="taskend_time" id="taskend_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{$end_time}" />
+            </div>
+                    
+            <div class="searchbar"><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></div>
+                 
+            <div class="subBar">
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar ">
+        <ul class="toolBar">
+            <li><a class="add" href="__ADMIN__Task/edit" target="navTab"><span><i class="fa fa-plus-square"></i>&nbsp;添加</span></a></li>
+            <li><a class="delete" href="__ADMIN__Task/removeinfo?tid={sid_task}" target="ajaxTodo" title="确定要删除吗?"><span><i class="fa fa-minus-square"></i>&nbsp;删除</span></a></li>
+            <li><a class="edit" href="__ADMIN__Task/edit?tid={sid_task}" target="navTab"><span><i class="fa fa-pencil-square"></i>&nbsp;修改</span></a></li>
+            <li class="line">line</li>
+        </ul>
+    </div>
+    <table class="table" width="100%" layoutH="155">
+        <thead>
+        <tr>
+            <th width="20"  align="center" ></th>
+            <th width="30"  align="center" >任务名称</th>
+            <th width="40"  align="center" >描述</th>
+            <th width="30"  align="center" >开始时间</th>
+            <th width="40"  align="center" >截止时间</th>
+            <th width="40"  align="center" >完成状态</th>
+            <th width="40"  align="center" >任务详情</th>
+            <!--<th width="40"  align="center" >人员轨迹</th>-->
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr target="sid_task" rel="{$data['id']}">
+            <td>{$k + $numPerPage*($currentPage-1)}</td>
+            <td>{$data['name']}</td>
+            <td>{$data['describle']}</td>
+            <td>{if empty($data['start_time'])}{else}{$data['start_time']|date="Y-m-d H:i",###}{/if}</td>
+            <td>{if empty($data['end_time'])}{else}{$data['end_time']|date="Y-m-d H:i",###}{/if}</td>
+            <td>{if $data['complete']=="1"}已完成{else}未完成{/if}</td>
+            <td><a href="__ADMIN__Task/taskinfo?taskid={$data['id']}" target="navTab" rel="show_task" title="{$data['name']}任务详情">查看</a></td>
+            <!--<td><a href="__ADMIN__Task/PersonnelTrajectory" target="navTab" rel="task_personnel_trajecttory" fresh="true" title="{$data['name']}任务轨迹回放" >轨迹回放</a></td>-->
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    <div class="panelBar bottom-pagination">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox combox_select" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+
+    </div>
+</div>
+</div>
+
+<script>
+    $('#complete').val('{$complete}');
+    $('.combox_select').val('{$numPerPage}');
+    $('.buttonActive').on('click',function () {
+        var start_time = $('#taskstart_time').val();
+        var end_time = $("#taskend_time").val();
+        if(Date.parse(new Date(start_time))>Date.parse(new Date(end_time))){
+            alertMsg.error('请确认时间选择是否正确，任务截止时间不能在任务开始时间前！');
+        }
+    });
+</script>
+

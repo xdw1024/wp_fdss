@@ -1,0 +1,159 @@
+<form id="pagerForm"  rel="pagerForm" method="post" action="__ADMIN__Zone/selectUser">
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+    <input type="hidden" name="keyword" value="{$keyword}"/>
+    <input type="hidden" id="checkuser" name="checkuser" value="{$checkuser}"/>
+    <input type="hidden" id="checkusername" name="checkusername" value="{$chkusername}"/>
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="__ADMIN__Zone/selectUser" onsubmit="return dwzSearch(this, 'dialog');">
+        <input type="hidden"  name="checkuser" value="{$checkuser}"/>
+        <input type="hidden"  name="checkusername" value="{$chkusername}"/>
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>人员编号/名称:</label>
+                    <input class="textInput" name="keyword" value="{$keyword}" type="text">
+                </li>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+                    <li><button type="button" onclick="chkuserfun()" class="button" style="height: 25px;">选择带回</button></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+
+    <table class="table" layoutH="118" targetType="dialog" width="100%">
+        <thead>
+        <tr>
+            <th width="30"><input id="tkid" type="checkbox" class="checkboxCtrl chkusername" group="name" /></th>
+            <th></th>
+            <th orderfield="name">帐号</th>
+            <th orderfield="addr">名称</th>
+            <th orderfield="type">所属部门</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr>
+            <td><input class="chkusername" type="checkbox" id="{$data['id']}" name="name" value="{$data['nickname']}"/></td>
+            <td>{$k+$numPerPage*($currentPage-1)}</td>
+            <td>{$data[\'account\']}</td>
+            <td>{$data[\'nickname\']}</td>
+            <td>{$data[\'department_name\']}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar">
+        <div class="pages">
+            <span>每页</span>
+
+            <select  class="combox_dialog" name="numPerPage" onchange="dialogPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+        <div class="pagination" targetType="dialog" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+    </div>
+</div>
+<script>
+    $('.combox_dialog').val('{$numPerPage}');
+    var data = $("input[name='checkuser']").val();
+    var userdata = $("input[name='checkusername']").val();
+    //初始化选择状态
+    $(document).ready(function(){
+        var r = $("input[name='checkuser']").val();
+        var boxes = document.getElementsByName("name");
+        var result = r.split(",");
+        setTimeout(function(){
+            for(var j=0;j<boxes.length;j++){
+                for(var i=0;i<result.length;i++){
+                    if(boxes[j].id == result[i]){
+                        boxes[j].checked = true;
+                        break
+                    }
+                }
+            }
+        }, 100);
+    });
+
+    //初始化存储数组
+    if(data == ""){
+        var checkedIds= [];
+    }else{
+        var checkedIds= data.split(",");
+    }
+    if(userdata == ""){
+        var checkedNames= [];
+    }else{
+        var checkedNames= userdata.split(",");
+    }
+
+    /* 将选中的数据ID保存*/
+    $(document).on("change",".chkusername",function(){
+        $(".chkusername").each(function () {
+            if(this.checked){
+                if (contains(checkedIds, this.id) == true) {
+                } else {
+                    if(this.name == "name"){
+                        checkedIds.push(this.id);
+                        checkedNames.push(this.value);
+                    }
+                }
+            }else{
+                if (contains(checkedIds, this.id) == true) {
+                    removeByValue(checkedIds,this.id);
+                    removeByValue(checkedNames,this.value);
+                } else {
+                }
+            }
+        });
+        var chkuserid = checkedIds.toString();
+        var chkusername = checkedNames.toString();
+        $("input[name='checkuser']").val(chkuserid);
+        $("input[name='checkusername']").val(chkusername);
+
+    });
+
+    //判断元素是否在数组中
+    function contains(arr, obj) {
+        var i = arr.length;
+        while (i--) {
+            if (arr[i] === obj) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //删除数组元素
+    function removeByValue(arr, val) {
+        for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+    //data return
+    function chkuserfun() {
+        var ckuserid = $("input[name='checkuser']").val();
+        var ckusername = $("input[name='checkusername']").val();
+        $('#chkuserid').val(ckuserid); //'zone/edit.html的元素对象'
+        $('#ckusername').val(ckusername);
+        $.pdialog.closeCurrent();
+    }
+</script>

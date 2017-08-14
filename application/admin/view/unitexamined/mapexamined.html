@@ -1,0 +1,32 @@
+<div class="pageContent">
+    <!--start 单位信息-->
+    <div  class="unit-edit">
+        <form method="post" action="#" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+            <div class="pageFormContent l-input-list" layoutH="20">
+                <input type="hidden" name="record_id" value="{$record_id}">
+                <input type="hidden" name="unit_id" value="{$unit_id}">
+
+                <dl class="nowrap">
+                    <p style="padding-left: 20px; font-weight: bold;">地图定位（请在地图中点击单位所在点）：</p></br>
+                    <p><label>纬度：</label><input name="x_coord" id="x_point" class="required" type="text" size="30" value="{$x_coord_new}" readonly="true" /></p></br>
+                    <p><label>经度：</label><input name="y_coord" id="y_point" class="required" type="text" size="30" value="{$y_coord_new}" readonly="true" /></p>
+                </dl>
+                <div class="clearfix"></div>
+				<div class="form-btn-box">
+                    <div class="buttonActive"><div class="buttonContent"><button type="submit">通过</button></div></div>
+                    <!--<div class="buttonActive"><div class="buttonContent"><button type="submit">不通过</button></div></div>-->
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </div>
+            </div>
+
+            <!--start 地图-->
+            <div class="r-map" layoutH="1">
+                <iframe src="__ADMIN__Unit_Examined/unitMap?x_coord_new={$x_coord_new}&y_coord_new={$y_coord_new}&x_coord_old={$unit['x_coord']}&y_coord_old={$unit['y_coord']}" style="width: 99.7%;height:99.7%;"></iframe>
+            </div>
+            <!--end 地图-->
+
+        </form>
+    </div>
+    <!--end 单位信息-->
+
+</div>

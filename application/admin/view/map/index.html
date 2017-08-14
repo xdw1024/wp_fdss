@@ -1,0 +1,260 @@
+<form id="pagerForm" method="post" action="__ADMIN__Map/getUnit">
+    <input type="hidden" name="status" value="${param.status}" />
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="${numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="keyword" value="${keyword}" />
+</form>
+
+<div id="map-index" class="pageContent div-absolute mappersonline-index">
+    <!--start 地图-->
+    <div class="map-box">
+        <iframe id="map_iframe" name="map_iframe" src="__ADMIN__Map/showMap?x_point=&y_point=&init=1"></iframe>
+    </div>
+    <!--end 地图-->
+    <!--start 查询板块-->
+
+    <div class="right_menu_banner">
+        <!--start 区域定位、搜索-->
+        <div class="tabsContent">
+            <div id="map_sel_show_or_hidden">
+            <!--start 搜索条件-->
+            <div id="search_condition">
+                <div class="padding_fix">
+                    <ul>
+                        <li class="city_title">
+                            <span class="font-bold" >行政区域：</span>
+                            <!--<a id="map_administrative_area2" href="__ADMIN__Map/getArea" target="dialog" rel="area_list" >选择乡镇</a>-->
+                            <a id="map_administrative_area" href="__ADMIN__Map/getMyArea" target="dialog" rel="area_list" >选择区域</a>
+                        </li>
+                    </ul>
+                    <ul>
+                        <!--单位类型选择-->
+                        <li>
+                            <span class="font-bold">查询类别：</span> <label><input type="checkbox" class="checkboxCtrl" group="map_unit_type" checked="checked" />全选 / 取消</label></br>
+                            {foreach $unit_type as $ut}
+                            <label class="type"><input type="checkbox" name="map_unit_type" value="{$ut.id}" checked="checked" /><img src="__UPLOAD_IMGE__/{$ut.icon}" /><span>{$ut.name}</span></label>
+                            {/foreach}
+                        </li>
+                    </ul>
+                    <div style="clear: both;"></div>
+                    <ul class="search_box">
+                        <span class="font-bold">单位名称：</span>
+                        <input id="keyWord" name="keyWord" type="text" />
+                    </ul>
+                    <div class="divline"></div>
+                    <ul>
+                        <span style="float: left;margin-top: 5px;" class="font-bold">检查情况：</span>
+                        <select class="combox" id="Check" name="Check" style="margin-left:3px;">
+                            <option value="0">全部</option>
+                            <option value="1">已检查</option>
+                            <option value="2">未检查</option>
+                        </select>
+                    </ul>
+                    <a class="button" id="search_btn" href="javascript:;" style="float: right;" ><span>&nbsp;&nbsp;查询&nbsp;&nbsp;</span></a>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+            <!--end 搜索条件-->
+            <!--start 搜索统计-->
+            <div id="search_count" style="display: none">
+                <div class="padding_fix">
+                    <ul><li><span class="font-bold" id="total_count">搜索单位总计：0家</span></li></ul>
+                    <div class="divline"></div>
+                    <ul>其中：（数量/家）</ul>
+                    <ul id="map_unit_type_count">
+                        <!--搜索结果统计 。。。 -->
+                    </ul>
+                    <div style="clear: both;"></div>
+                    <div class="divline"></div>
+                    <a class="button" id="return_condition" href="javascript:;" style="float: right;" ><span>返回查询条件</span></a>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+            <!--edn 搜索统计-->
+            </div>
+            <div id="map_sel_toggle" class="togglebtn"><span><i class="fa fa-angle-double-up"></i>&nbsp;点击收起&nbsp;<i class="fa fa-angle-double-up"></i></span></div>
+        </div>
+        <!--end 区域定位、搜索-->
+
+        <!--start 搜索结果显示-->
+        <div class="search_result">
+            <div class="tabs" currentIndex="0" eventType="click">
+                <div class="tabsHeader">
+                    <div class="tabsHeaderContent">
+                        <ul>
+                            <li id="info_block"><a href="javascript:;"><span>搜索结果</span></a></li>
+                            <li id="info_detail"><a href="javascript:;"><span>详细信息</span></a></li>
+                            <li id="info_record"><a href="javascript:;"><span>检查记录</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tabsContent">
+                    <!--start 搜索结果-->
+                    <div id="result_block">
+
+                        {include file="map/unitsearchresult" /}
+                        <!--start 单位查询结果分页-->
+                        <div id="result_block_page">
+                            <!--{include file="map/result_page" /}-->
+                        </div>
+                        <!--end 单位查询结果分页-->
+                    </div>
+                    <!--end 搜索结果-->
+                    <!--start 详细信息-->
+                    <div id="result_detail">
+                        <pre>
+
+                        </pre>
+                    </div>
+                    <!--edn 详细信息-->
+                    <!--start 检查记录-->
+                    <div id="result_check_record">
+
+                    </div>
+                    <!--end 检查记录-->
+                </div>
+                <div class="tabsFooter">
+                    <div class="tabsFooterContent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!--end 搜索结果显示-->
+    </div>
+    <!--end 查询板块-->
+</div>
+
+<script>
+
+    var search_type = 0;//单位查询类型（初始加载、区域切换、条件查询）
+    $(document).ready(function() {
+
+        //start 初始化隐藏分页按钮
+        $('#result_block_page').css('display','block');
+        //end 初始化隐藏分页按钮
+
+        //start 查询板块收缩展开
+        $('#map_sel_toggle span').on('click',function(){
+            $('#map_sel_show_or_hidden').toggle(500);
+            ($(this).html() == '<i class="fa fa-angle-double-up"></i>&nbsp;点击收起&nbsp;<i class="fa fa-angle-double-up"></i>') ? $(this).html('<i class="fa fa-angle-double-down"></i>&nbsp;点击展开&nbsp;<i class="fa fa-angle-double-down"></i>') : $(this).html('<i class="fa fa-angle-double-up"></i>&nbsp;点击收起&nbsp;<i class="fa fa-angle-double-up"></i>');
+        });
+        //end 查询板块收缩展开
+
+        //start 返回条件查询
+        $('#return_condition').on('click',function () {
+            $("#search_condition").attr('style','display:block;');
+            $("#search_count").attr('style','display:none;');
+        });
+        //end 返回条件查询
+
+        //start 单位的查询（单位查询按钮）
+        $("#search_btn").on('click',function () {
+            search_type = 1;
+            select_unit_event();
+            $("#search_condition").attr('style','display:none;');
+            $("#search_count").attr('style','display:block;');
+        });
+        //end 单位的查询（单位查询按钮）
+
+        //start 监听区域变化（区域查询）
+        $(document).on('click', '.map_zone_sel', function() {
+            search_type = 2;
+            select_unit_event();
+        });
+        //end 监听区域变化（区域查询）
+
+        //start 单位查询动作，html元素显示隐藏控制
+        function select_unit_event() {
+            map_add_unit();
+            $("#result_detail").empty();
+            $("#result_check_record").empty();
+            $(".tabs li").removeClass('selected');
+            $("#info_block").addClass('selected');
+            $("#result_block").attr('style','display:block;');
+            $("#result_detail").attr('style','display:none;');
+            $("#result_check_record").attr('style','display:none;');
+        }
+        //end 单位查询动作，html元素显示隐藏控制
+
+        //start 单位查询
+        function map_add_unit() {
+            //区域名称
+            var zone_name = $("#map_administrative_area").text();
+            //单位类型
+            var map_unit_type = '';
+            $("input[name='map_unit_type']:checkbox:checked").each(function () {
+                map_unit_type += $(this).val()+',';
+            });
+            //关键字
+            var keyWord = $("#keyWord").val();
+            var Check = $("#Check").val();
+            //分页参数
+            var currentPage = $("#map_page_param").attr('currentPage');
+            var numPerPage = $("#map_page_param").attr('numPerPage');
+
+            //获取单位集
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map/getUnit",
+                data: "x_coord=123&y_coord=123&keyWord="+keyWord+"&unit_type="+map_unit_type+"&Check="+Check+"&zoneName="+zone_name+"&currentPage="+currentPage+"&numPerPage="+numPerPage,
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //start 刷新查询结果
+                    //start 向地图添加单位
+                    window.map_iframe.addUnitBrige(data['units']);
+                    //end 向地图添加单位
+                    //start 分类搜索/统计板块
+                    var html = '搜索单位总计：'+data["total_count"]+'家';
+                    $("#total_count").html(html);
+                    html = '';
+                    $.each(data['count'],function(index,value){
+                        html += '<li><label class="type"><img src="__UPLOAD_IMGE__/'+ value['icon']+'" /><span>'+value['name']+'（'+value['count']+'</span></label></li>';
+                    });
+                    $("#map_unit_type_count").html(html);
+                    //end 分类搜索/统计板块
+                    //start 分页按钮更新
+                    var page_flag = (search_type == 1)? 'block' : 'none';
+                    page_flag =  'block';
+                    $('#result_block_page').css('display',page_flag);
+//                    $('#map_page_total').html('共'+Math.ceil(data['total_count']/data['numPerPage'])+'页');
+//                    $("#map_page_param").remove();
+//                    html = "<div class='pagination' id='map_page_param' targetType='navTab' totalCount='"+ data['total_count']+"' numPerPage='"+data['numPerPage']+"' pageNumShown='3' currentPage='"+data['currentPage']+"'></div>";
+//                    $('.page').after(html);
+                    //end 分页按钮更新
+                    //end 刷新查询结果
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        }
+        //end 单位查询
+
+    });
+
+
+
+    //start 更新单位查询列表（被地图 iframe 页面调用）
+    function addUnitInfoList(html){
+        $("#unit_result").empty();
+        $("#unit_result").append(html);
+    }
+    //end 更新单位查询列表
+
+    //start 点击地图单位信息，切换至单位详细信息列表（被地图 iframe 页面调用）
+    function changeTodetail() {
+        $("#result_detail").empty();
+        $("#result_check_record").empty();
+        $(".tabs li").removeClass('selected');
+        $("#info_detail").addClass('selected');
+        $("#result_block").attr('style','display:none;');
+        $("#result_detail").attr('style','display:block;');
+        $("#result_check_record").attr('style','display:none;');
+    }
+    //end 点击地图单位信息，切换至单位详细信息列表
+
+</script>

@@ -1,0 +1,7 @@
+添加了数据表
+
+行政区域 fds_administrative_area (见脚本fds_administrative_area.sql)
+
+----------------------------------------------
+完整数据库脚本 (见 fdss.sql)
+

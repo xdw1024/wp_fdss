@@ -1,0 +1,78 @@
+<form id="pagerForm"  rel="pagerForm" method="post" action="">
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+    <input type="hidden" name="keyword" value="{$keyword}"/>
+    <input type="hidden" name="userid" value="{$userid}"/>
+    <input type="hidden" name="taskid" value="{$taskid}"/>
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="__ADMIN__UserTask/taskinfo" onsubmit="return navTabSearch(this);">
+        <input type="hidden" name="userid" value="{$userid}"/>
+        <input type="hidden" name="taskid" value="{$taskid}"/>
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>单位名称:</label>
+                    <input class="textInput" name="keyword" value="{$keyword}" type="text">
+                </li>
+                <div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+
+    <table class="table" layoutH="118" targetType="navTab" width="100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th orderfield="unitname">被检单位名称</th>
+            <th orderfield="username">检查人员姓名</th>
+            <th orderfield="level">单位检查结果</th>
+            <th orderfield="type">检查结果说明</th>
+            <th orderfield="info">检查时间</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="info" id="data" key="k"}
+        <tr>
+            <td>{$k+$numPerPage*($currentPage-1)}</td>
+            <td>{$data['name']}</td>
+            <td>{$username}</td>
+            <td>{if $data['standard_level']=="0"}合格{elseif $data['standard_level']=="1"}优秀
+                {elseif $data['standard_level']=="2"}良好{elseif $data['standard_level']=="3"}不合格{else}未检查{/if}</td>
+            <td>{$data['checkinfo']}</td>
+            <td>{php}echo $data['time']!=''?date('Y-m-d',$data['time']):''; {/php}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar">
+        <div class="pages">
+            <span>每页</span>
+
+            <select  class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+    </div>
+</div>
+<script>
+    $('.combox').val('{$numPerPage}');
+</script>

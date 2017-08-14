@@ -1,0 +1,89 @@
+<style>
+    #task-edit .pageFormContent dt {text-align: right;}
+    #task-edit .pageFormContent label {line-height: 25px; color: #999;}
+    #task-edit .nowrap dt {width: 30%; float: left; color: #777; font-weight: bold;}
+    #task-edit .nowrap dd {width: 68%; float: right;}
+    #task-edit .nowrap dd input {border-color: #ccc;}
+    @media only screen and (max-width:1100px ) {
+    	#task-edit .nowrap dd textarea {width: 80%;}
+    }   
+    #task-edit .formBar {width: 80%; margin: auto; margin-top: 20px;border-top: 2px solid #ddd;text-align: center;position: relative;padding-top: 10px;}
+    #task-edit .formBar ul,#task-edit .formBar ul li {float: initial;}
+    #task-edit .formBar ul {position: absolute; width: 190px;left: 50%; margin-left: -90px;}
+    #task-edit .formBar ul li .editbuttonActive {margin-right: 10px;}
+    #task-edit .formBar ul li button {width: 80px; margin: auto;padding: 0px;}
+</style>
+<div id="task-edit" class="pageContent">
+    <form method="post" action="__ADMIN__Task/saveinfo" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+        <div class="pageFormContent" layoutH="56">
+            <input type="hidden" name="id" value="{$info['task_info']['id']}">
+            <dl class="nowrap">
+                <dt>任务名称：</dt>
+                <dd>
+                    <input name="name" class="required" style="width: 168px;" type="text" size="30" value="{$info['task_info']['name']}" alt="请输入任务名称" />
+                </dd>
+            </dl>
+            <dl class="nowrap">
+                <dt>开始时间：</dt>
+                <dd>
+                    <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                    <input id="editstart_time" name="start_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{php}echo $info['task_info']['start_time']!=''?date('Y-m-d',$info['task_info']['start_time']):''; {/php}" />                   
+                </dd>
+            </dl>
+            <dl class="nowrap">
+                <dt>结束时间：</dt>
+                <dd>
+                	<a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                    <input id="editend_time" name="end_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{php}echo $info['task_info']['end_time']!=''?date('Y-m-d',$info['task_info']['end_time']):''; {/php}" />                   
+                </dd>
+            </dl>
+            <dl class="nowrap">
+                <dt>检查人员：</dt>
+                <dd>                    
+                    <input type="hidden" name="checkPersonnel.id" value=""/>
+                    {if condition="$info['task_personnel']['account'] neq '' "}
+                        <input type="text" style="width: 168px;" name="checkPersonnel.personnelinfo" value="{$info['task_personnel']['account'].'--'.$info['task_personnel']['nickname']}"  lookupGroup="checkPersonnel" readonly="true" />
+                    {else/}
+                        <input type="text" style="width: 168px;" name="checkPersonnel.personnelinfo" value=""  lookupGroup="checkPersonnel" readonly="true" />
+                    {/if}
+                    <a class="btnLook" rel="chkuserrel" href="__ADMIN__Task/selectTaskPersonnel" lookupGroup="checkPersonnel">查找带回</a>
+                </dd>
+            </dl>
+            
+            <dl class="nowrap">
+                <dt>描  述：</dt>
+                <dd>
+                    <textarea name="describle" cols="100" rows="6" alt="请输入单位相关信息" >{$info['task_info']['describle']}</textarea>
+                </dd>
+            </dl>
+            <dl class="nowrap">
+                <dt>检查单位：</dt>
+                <dd>
+                    <input id="chkunitid" name="chkunitid" value="{$ckunit_id}" type="hidden">
+                    <a class="btnLook btnLook_unit" rel="chkunitrel"  href="__ADMIN__Task/selectTaskUnit?cid={$task_id}" onclick="sentunitfun()" lookupGroup="checkunit">查找带回</a><br>
+                    <!--<input name="org3.name" type="text"/>-->
+                    <textarea id="ckunitname" name="chkunit_name" cols="100" rows="6" alt="请输入单位相关信息" readonly="true" >
+                    {$ckunit_name}
+                    </textarea>
+
+                </dd>
+            </dl>          
+            <div class="clearfix"></div>
+            <div class="formBar">
+	            <ul>
+	                <li><div class="button editbuttonActive"><div class="editbuttonContent"><button type="submit">保存</button></div></div></li>
+	                <li>
+	                    <div class="button"><div class="editbuttonContent"><button type="button" class="close">取消</button></div></div>
+	                </li>
+	            </ul>
+	        </div>
+        </div>        
+    </form>
+</div>
+<script>
+    function sentunitfun() {
+        var ckunit_id = $('#chkunitid').val();
+        var ckunit_name = $('#ckunitname').val();
+        $(".btnLook_unit").attr("href","__ADMIN__Task/selectTaskUnit?uid="+ckunit_id+"&uname="+ckunit_name);
+    }
+</script>

@@ -1,0 +1,114 @@
+<div class="pageContent">
+    <!--start 单位信息-->
+    <div  class="unit-edit">
+        <form method="post" action="__ADMIN__Unit/saveInfoxzyy" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+            <div class="pageFormContent l-input-list" layoutH="20">
+                <input type="hidden" id="id" name="id" value="{$info.unit_id}">
+                <input type="hidden" id="create_time" name="create_time" value="{$inform.create_time}">
+                <dl class="nowrap">
+                    <p>
+                        <label>单位名称：</label>
+                        <input name="name" class="required" type="text" size="30" value="{$info.organization_name}" alt="请输入单位名称" />
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>单位地址：</label>
+                        <input name="addr" class="required" type="text" size="30" value="{$info.addr}" alt="请输入单位所在地，具体到门牌号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>诊疗科目：</label>
+                        <input name="udiagnosissubject" class="required" type="text" size="30" value="{$info.udiagnosis_subject}" alt="请输入单位包含诊疗科目"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>法定代表人：</label>
+                        <input name="legalperson" class="required" type="text" size="30" value="{$info.legal_person}" alt="请输入单位负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>负责人：</label>
+                        <input name="leadingofficial" class="required" type="text" size="30" value="{$info.leading_official}" alt="请输入单位负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>医疗机构登记号：</label>
+                        <input name="registrationmark" class="required" type="text" size="30" value="{$info.registration_mark}" alt="请输入单位医疗机构登记号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap date">
+                    <p>
+                        <label>证书有效期：</label>
+                        <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                        <input id="validityperiod" name="validityperiod" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{php}echo $info['period_of_validity']!=''?date('Y-m-d',$info['period_of_validity']):''; {/php}" />                       
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>药房负责人：</label>
+                        <input name="pharmacyleader" class="required" type="text" size="30" value="{$info.pharmacyleader}" alt="请输入药房负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>联系电话：</label>
+                        <input name="phone" class="required" type="text" size="30" value="{$info.phone}" alt="请输入联系电话"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p style="padding-left: 20px; font-weight: bold;">地图定位（请在地图中点击单位所在点）：</p></br>
+                    <p><label>纬度：</label><input name="x_coord" id="x_point" class="required" type="text" size="30" value="{$inform.x_coord}" readonly="true" /></p></br>
+                    <p><label>经度：</label><input name="y_coord" id="y_point" class="required" type="text" size="30" value="{$inform.y_coord}" readonly="true" /></p>
+                    <p><label>所属区域：</label>
+                        <select class="" name="zone_id" id="zone_id">
+                            <option value="" >请选择单位所属区域</option>
+                            {volist name="zone" id="data" key="k" }
+                            <option value="{$data['id']}" {$inform.zone_id==$data['id']?'selected="selected"':''} >{$data['name']}</option>
+                            {/volist}
+                        </select>
+                    </p>
+                </dl>
+                <div class="clearfix"></div>
+				<div class="form-btn-box">                    
+                    <div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </div>
+            </div>
+
+            <!--start 地图-->
+            <div class="r-map" layoutH="1">
+                <iframe src="__ADMIN__Unit/unitMap?x_point={$inform.x_coord}&y_point={$inform.y_coord}" style="width: 99.7%;height:99.7%;"></iframe>
+            </div>
+            <!--end 地图-->
+
+            <!--div class="formBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                    <li>
+                        <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                    </li>
+                </ul>
+            </div-->
+        </form>
+    </div>
+    <!--end 单位信息-->
+
+</div>
+<script>
+    var myDate = new Date();
+    var time = Date.parse(myDate.toLocaleDateString());
+    time =time/1000;
+    var unitid = $("#id").val();
+    if(unitid == ""){
+        $("#create_time").val(time);
+    }
+//    $('#jbsxBox').loadUrl("__ADMIN__Unit/saveInfoxzyy", null, function (message) {
+//        $('#jbsxBox').parent().find("[layoutH]").layoutH();
+//    });
+
+</script>

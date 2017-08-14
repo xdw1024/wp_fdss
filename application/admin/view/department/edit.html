@@ -1,0 +1,32 @@
+
+<div class="pageContent">
+    <form method="post" action="__ADMIN__Department/saveinfo" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);" >
+        <div class="pageFormContent" layoutH="56">
+            <input type="hidden" name="id" value="{$info.p_id}">
+            <input type="hidden" name="p_old_name" value="{$info.p_name}">
+            <p>
+                <label>股室部门：</label>
+                <input name="name" class="required" type="text" size="30" value="{$info.p_name}" alt="请输入股室部门名称" />
+            </p>
+            <p>
+                <label>管理员：</label>
+                <select class="my_combox combox" name="admin_id">
+                    <option value="" >请选择管理人员</option>
+                    {volist name="admins" id="data" key="k" }
+                        <option value="{$data['id']}" {$info.admin_id==$data['id']?'selected="selected"':''} >
+                            {$data['nickname']}
+                        </option>
+                    {/volist}
+                </select>
+            </p>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                <li>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,72 @@
+<form id="pagerForm" method="post" action="__ADMIN__Task/selectTaskPersonnel">
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="__ADMIN__Task/selectTaskPersonnel" onsubmit="return dwzSearch(this, 'dialog');">
+        <div class="searchBar">
+            <ul class="searchContent" style="height: 30px;">
+                <li style="height: 30px;">
+                    <label>任务人员:</label>
+                    <input class="textInput" name="keyword" value="{$keyword}" type="text">
+                </li>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+
+    <table class="table" layoutH="118" targetType="dialog" width="100%">
+        <thead>
+        <tr>
+            <th></th>
+            <th orderfield="account">任务人员帐号</th>
+            <th orderfield="nickname">任务人员昵称</th>
+            <th orderfield="email">任务人员邮箱</th>
+            <th width="80">查找带回</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr>
+            <td>{$k+$numPerPage*($currentPage-1)}</td>
+            <td>{$data[\'account\']}</td>
+            <td>{$data[\'nickname\']}</td>
+            <td>{$data[\'email\']}</td>
+            <td>
+                <a class="btnSelect" href="javascript:$.bringBack({id:'{$data[\'id\']}',personnelinfo:'{$data[\'account\'].\'--\'.$data[\'nickname\']}'})" title="查找带回">选择</a>
+            </td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar">
+        <div class="pages">
+            <span>每页</span>
+
+            <select  class="combox_dialog" name="numPerPage" onchange="dialogPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+        <div class="pagination" targetType="dialog" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+    </div>
+</div>
+
+<script>
+    $('.combox_dialog').val('{$numPerPage}');
+</script>

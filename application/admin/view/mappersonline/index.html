@@ -1,0 +1,199 @@
+<div id="mappersonline-index" class="pageContent div-absolute mappersonline-index">
+    <!--start 地图-->
+    <div class="map-box">
+        <iframe id="personline_map_iframe" name="personline_map_iframe" src="__ADMIN__Map_Person_Line/showMap?x_point=&y_point=&init=1" style="width: 100%;height:100%;" ></iframe>
+    </div>
+    <!--end 地图-->
+    <!--start 查询板块-->
+    <div class="right_menu_banner">
+        <!--start 区域定位、搜索-->
+        <div class="padding_fix">
+            <ul class="select_fix">
+                <span style="float: left;margin-top: 5px;" class="font-bold" >所属股室：</span>
+                <select class="combox" id="personline_CheckDepartmentType" name="personline_CheckDepartmentType" style="margin-left:3px;" >
+                    <option value="0">全部股室</option>
+                    {foreach $department as $dp}
+                    <option value="{$dp.id}">{$dp.name}</option>
+                    {/foreach}
+                </select>
+            </ul>
+            <ul class="search_box">
+	            <div style="clear: both"></div>
+	            <span>编号/名称：</span>
+	            <input id="personline_keyWord" name="personline_keyWord" type="text" />
+            </ul>
+            <div class="divline"></div>
+            <a class="button" id="personline_search_btn" href="javascript:;" style="float: right;" ><span>查询</span></a>
+            <div style="clear: both;"></div>
+        </div>
+        <!--end 区域定位、搜索-->
+
+        <!--start 搜索结果显示-->
+        <div class="search_result">
+            <div class="tabs" currentIndex="0" eventType="click">
+                <div class="tabsHeader">
+                    <div class="tabsHeaderContent">
+                        <ul>
+                            <li id="info_block"><a href="javascript:;"><span>搜索结果</span></a></li>
+                            <li id="info_detail"><a href="javascript:;"><span>详细信息</span></a></li>
+                            <!--<li><a href="javascript:;" class="j-ajax"><span>标题3</span></a></li>-->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tabsContent" style="height:500px;">
+                <!--<div class="tabsContent" style="height:645px;">-->
+                    <!--start 搜索结果-->
+                    <div id="personline_result_block">
+                        {include file="mappersonline/unitsearchresult" /}
+                    </div>
+                    <!--end 搜索结果-->
+                    <!--start 详细信息-->
+                    <div id="personline_result_detail">
+                        <p>
+                            <label id="person_account">账号：</label>
+                        </p>
+                        <p>
+                        	<label  id="person_name">姓名：</label>
+                        </p>
+                        <p>
+                            <label class="dataselect_label">选择日期：</label>
+                            <input id="day_time" name="day_time" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{php}echo date('Y-m-d');{/php}" />
+                            <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                        </p>
+                        <p>
+                            <label class="dataselect_label">起始时刻：</label>
+                            <input id="start_time" class="date" type="text" dateFmt="HH:mm" mmStep="15" readonly="true" value="00:00" />
+                            <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                        </p>
+                        <p>
+                            <label class="dataselect_label">截止时刻：</label>                             
+                            <input id="end_time" name="end_time" class="date" type="text" dateFmt="HH:mm" mmStep="1" readonly="true" value="23:59" />
+                            <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                        </p>
+                        <div class="divline"></div>
+                        <p>
+                        	<a class="button" id="personline_run_btn" style="float: right;" href="javascript:;"><span>查询</span></a>
+                        </p>
+                    </div>
+                    <!--edn 详细信息-->
+                    <div></div>
+                </div>
+                <div class="tabsFooter">
+                    <div class="tabsFooterContent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!--end 搜索结果显示-->
+    </div>
+    <!--end 查询板块-->
+</div>
+<!--start初始化数据-->
+<input type="hidden" id="persons" value="{$persons}">
+<!--end 初始化数据-->
+
+<script>
+
+    $(document).ready(function() {
+
+        init();
+
+        //start 初始化搜索结果
+        function init() {
+            var persons = document.getElementById('persons').value;
+            var personsJsonObj = eval("(" + persons + ")");
+            $("#personline_result_block").append(person_info_to_html(personsJsonObj));
+        }
+        //end 初始化搜索结果
+
+        //start 人员的查询
+        $("#personline_search_btn").on('click',function () {
+            //关键字
+            var personline_CheckDepartmentType = $("#personline_CheckDepartmentType").val();
+            var personline_keyWord = $("#personline_keyWord").val();
+            //获取人员集
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map_Person_Line/getPersonInfo",
+                data: "department_type="+personline_CheckDepartmentType+"&keyword="+personline_keyWord,
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //start 刷新查询结果
+                    $("#personline_result_block").empty();
+                    $("#personline_result_block").append(person_info_to_html(eval("(" + data + ")")));
+                    $(".tabs li").removeClass('selected');
+                    $("#info_block").addClass('selected');
+                    $("#personline_result_block").attr('style','display:block;');
+                    $("#personline_result_detail").attr('style','display:none;');
+                    //end 刷新查询结果
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+        //end 人员的查询
+
+        //start 人员信息html
+        function person_info_to_html(persons) {
+            var html = '';
+            for (var i = 0; i < persons.length; i ++) {
+                html += '<div id="ps' + i + '" class="ps map_search_result " onclick="change_tab('+persons[i].id+',\''+persons[i].account+'\',\''+persons[i].nickname+'\')">' +
+                        '<p><a href="#" onclick="" style="text-decoration:underline; ">' + persons[i].account + '</a></p>' +
+                        '<p>' + persons[i].nickname + '</p>' +
+                        '</div>';
+            }
+            return html;
+        }
+        //end 人员信息html
+
+        //start 查询人员轨迹
+        $("#personline_run_btn").click('on',function () {
+
+            var day_time = $("#day_time").val();
+            var start_time = $("#start_time").val();
+            var end_time = $("#end_time").val();
+            if(typeof (current_person_id) == 'undefined'){
+                alert("请先选择人员！");
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map_Person_Line/getPersonLocal",
+                data: "person_id="+current_person_id+'&day_time='+day_time+'&start_time='+start_time+'&end_time='+end_time,
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //start 刷新查询结果
+                    window.personline_map_iframe.run_back_history(data,current_person_name);
+                    //end 刷新查询结果
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+        //end 查询人员轨迹
+
+    });
+    //end jq
+
+    var current_person_id;//当前查询人员的id
+    var current_person_name;//当前查询人员的名称
+    //start 切换搜索结果、详细信息
+    function change_tab(person_id,person_account,person_name) {
+        current_person_id = person_id;
+        current_person_name = person_name;
+        $("#person_account").html('账号：'+person_account);
+        $("#person_name").html('名称：'+person_name);
+        $(".tabs li").removeClass('selected');
+        $("#info_detail").addClass('selected');
+        $("#personline_result_block").attr('style','display:none;');
+        $("#personline_result_detail").attr('style','display:block;');
+    }
+    //end 切换搜索结果、详细信息
+
+
+</script>

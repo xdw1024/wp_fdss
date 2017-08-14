@@ -1,0 +1,136 @@
+<div id="mapwarning-index" class="pageContent div-absolute mappersonline-index">
+    <!--start 地图-->
+    <div class="map-box">
+        <iframe id="mapperson_iframe" name="mapperson_iframe" src="__ADMIN__Map_Person/showMap?x_point=&y_point=&init=1" style="width: 100%;height:100%;" ></iframe>
+    </div>
+    <!--end 地图-->
+    <!--start 查询板块-->
+    <div class="right_menu_banner">
+        <!--start 区域定位、搜索-->
+        <div class="padding_fix">
+            <ul class="select_fix">
+                <span style="float: left;margin-top: 5px;" class="font-bold" >所属股室：</span>
+                <select class="combox" id="person_CheckDepartmentType" name="person_CheckDepartmentType" style="margin-left:3px;" >
+                    <option value="0">全部股室</option>
+                    {foreach $department as $dp}
+                    <option value="{$dp.id}">{$dp.name}</option>
+                    {/foreach}
+                </select>
+            </ul>
+            <ul class="search_box">
+                <div style="clear: both"></div>
+                <span>编号/名称：</span>
+                <input id="person_keyWord" name="person_keyWord" type="text" />
+            </ul>
+            <div class="divline"></div>
+            <a class="button" id="person_search_btn" href="javascript:;" style="float: right;" ><span>查询</span></a>
+            <div style="clear: both;"></div>
+        </div>
+        <!--end 区域定位、搜索-->
+
+        <!--start 搜索结果显示-->
+        <div class="search_result">
+            <div class="tabs" currentIndex="0" eventType="click">
+                <div class="tabsHeader">
+                    <div class="tabsHeaderContent">
+                        <ul>
+                            <li><a href="javascript:;"><span>搜索结果</span></a></li>
+                            <li><a href="javascript:;"><span>详细信息</span></a></li>
+                            <!--<li><a href="javascript:;" class="j-ajax"><span>标题3</span></a></li>-->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tabsContent" style="height:500px;">
+                <!--<div class="tabsContent" style="height:645px;">-->
+                    <!--start 搜索结果-->
+                    <div id="person_result_block">
+                        {include file="mapperson/unitsearchresult" /}
+                    </div>
+                    <!--end 搜索结果-->
+                    <!--start 详细信息-->
+                    <div id="person_result_detail">
+                        <pre>
+
+                        </pre>
+                    </div>
+                    <!--edn 详细信息-->
+                    <div></div>
+                </div>
+                <div class="tabsFooter">
+                    <div class="tabsFooterContent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!--end 搜索结果显示-->
+    </div>
+    <!--end 查询板块-->
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        //start 单位的查询并描点
+        $("#person_search_btn").on('click',function () {
+
+            //关键字
+            var person_CheckDepartmentType = $("#person_CheckDepartmentType").val();
+            var person_keyWord = $("#person_keyWord").val();
+            //获取单位集
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map_person/getPerson",
+                data: "x_coord=123&y_coord=123&department_id="+person_CheckDepartmentType+"&person_keyword="+person_keyWord,
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //start 刷新查询结果
+                    window.mapperson_iframe.addPersonLocal(data);
+                    //end 刷新查询结果
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+        //end 单位的查询并描点
+
+        //start 定时更新人员位置
+          var updatePersonLocal = setInterval(function () {
+
+              var flag = $("#mapperson_iframe").length;//如果关闭了人员定位
+              //alert(flag);
+              if(!flag){
+                  clearInterval(updatePersonLocal);//清除定时刷新,并退出结束
+                  return;
+              }
+
+              $.ajax({
+                  type: "post",
+                  url: "__ADMIN__Map_Person/updateAppUserNewLocaltion",
+                  data: "",
+                  dataType :'json',
+                  success: function(data){
+                      //console.log(data);
+                      window.mapperson_iframe.myrefresh(data);
+                  },
+                  error: function(){
+                      alert('获取人员信息fail');
+                  }
+              });
+          },8000); //指定5秒刷新一次
+        //end 定时更新人员位置
+
+    });
+    //end jq
+
+    //start 更新单位查询列表
+    function addPersonInfoList(html){
+        $("#person_unit_result").empty();
+        $("#person_unit_result").append(html);
+    }
+    //end 更新单位查询列表
+
+</script>

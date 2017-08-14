@@ -1,0 +1,30 @@
+<div class="pageContent">
+
+    <ul>
+    {foreach $area_info as $area}
+        {if condition="substr($area.zone_code,-2) eq '00'"}
+            </br>
+            <li>
+                <a class="sel_close" href="#" data="{$area.zone_name}">{$area.zone_name}：</a>
+            </li>
+        {elseif condition="substr($area.zone_code,-2) eq '01'"/}
+        {else /}<a class="sel_close" href="#" data="{$area.zone_name}">&nbsp;&nbsp;{$area.zone_name}</a>
+        {/if}
+    {/foreach}
+    </ul>
+
+</div>
+
+<script>
+    $(document).ready(function() {
+        //start 选择并关闭的当前弹出窗
+        $(".sel_close").on('click',function () {
+            var zone_name = $(this).attr('data');
+            $('#administrative_area').text(zone_name);
+            window.mapperson_iframe.getBoundary(zone_name);//重新加载地图
+            $.pdialog.closeCurrent();
+        });
+        //end 选择并关闭的当前弹出窗
+    });
+</script>
+

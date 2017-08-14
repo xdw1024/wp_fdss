@@ -1,0 +1,63 @@
+<div id="zone-edit" class="pageContent">
+    <form method="post" action="__ADMIN__Zone/saveinfo" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);" >
+        <div id="pageFormContent" class="pageFormContent" layoutH="56">
+            <input type="hidden" name="zone_id" value="{$info.id}">
+            <input type="hidden" name="unit_type_id" value="{$info.unit_type_id}">
+            <input type="hidden" name="action" value="{$action}">
+            <p>
+                <label>区  域：</label>
+                {if ($action == 'edit')}
+                <input type="text" name="unit_name" value="{$info.zone_name}" readonly="true">
+                {else}
+                <select class="my_combox combox required" name="zone_id">
+                    <option value="" >请选择区域</option>
+                    {volist name="zone" id="data" key="k" }
+                    <option value="{$data['id']}" {$info.id==$data['id']?'selected="selected"':''} >
+                        {$data['name']}
+                    </option>
+                    {/volist}
+                </select>
+                {/if}
+            </p>
+            <p>
+                <label>单位类型：</label>
+                {if ($action == 'edit')}
+                <input type="text" name="unit_id" value="{$info.unit_type_name}" readonly="true">
+                {else}
+                <select class="my_combox combox required" name="unit_type_id">
+                    <option value="" >请选择单位类型</option>
+                    {volist name="unit_type" id="data" key="k" }
+                    <option value="{$data['id']}" {$info.unit_type_id==$data['id']?'selected="selected"':''} >
+                        {$data['name']}
+                    </option>
+                    {/volist}
+                </select>
+                {/if}
+            </p>
+            <p>
+                <label>监管人员：</label>
+                <input id="chkuserid" name="chkuserid" value="{$info.user_ids}" type="hidden">
+                <a class="btnLook btnLook_user" rel="chkuser"  href="__ADMIN__Zone/selectUser" onclick="sentuserfun()" lookupGroup="checkUser">查找带回</a>
+                <textarea id="ckusername" name="chkuser_name" cols="60" rows="3" alt="请选择监管人员" readonly="true" >
+                    {$info.user_name}
+                </textarea>
+            </p>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                <li>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<script>
+    function sentuserfun() {
+        var ckuser_id = $('#chkuserid').val();
+        var ckuser_name = $('#ckusername').val();
+        $(".btnLook_user").attr("href","__ADMIN__Zone/selectUser?uid="+ckuser_id+"&uname="+ckuser_name);
+    }
+</script>

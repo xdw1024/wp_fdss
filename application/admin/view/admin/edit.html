@@ -1,0 +1,33 @@
+<div class="pageContent">
+    <form method="post" action="__ADMIN__Admin/saveinfo" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);" >
+        <div class="pageFormContent" layoutH="56">
+            <input type="hidden" name="id" value="{$info.id}">
+            <input type="hidden" name="old_account" value="{$info.account}">
+            <input type="hidden" name="old_pw" value="{$info.password}">
+            <p>
+                <label>帐  户：</label>
+                <input name="account" class="required" type="text" size="30" value="{$info.account}" alt="请输入帐户" />
+            </p>
+            <p>
+                <label>姓  名：</label>
+                <input name="nickname" class="required" type="text" size="30" value="{$info.nickname}" alt="请输入姓名"/>
+            </p>
+            <p>
+                <label>密  码：</label>
+                <input id="password" name="password" class="required" type="password"  size="30" value="{$info.password}" alt="请输入密码"/>
+            </p>
+            <p>
+                <label>邮  箱：</label>
+                <input name="email" class="textInput" type="text" size="30" value="{$info.email}" alt="请输入邮箱"/>
+            </p>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                <li>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>

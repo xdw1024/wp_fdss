@@ -1,0 +1,58 @@
+<div id="warning_unit_result" >
+    <!--<div class="unit_detail" >-->
+        <!--<p><a href="#" onclick="detail_show(11)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>好好学习</p>-->
+    <!--</div>-->
+    <!--<div class="unit_detail"  >-->
+        <!--<p><a href="#" onclick="detail_show(22)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>科学严谨</p>-->
+    <!--</div>-->
+    <!--<div class="unit_detail" >-->
+        <!--<p><a href="#" onclick="detail_show(33)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>思维开阔</p>-->
+    <!--</div>-->
+</div>
+
+<script>
+    //start 查询结果列表中单位的点击事件
+    function warning_detail_show(unit_data) {
+        //更新详细板块信息
+        //获取单位id
+        var unitid =unit_data.id;
+        $(document).ready(function() {
+            //start 获取单位详细信息
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map_Warning/getWarningtype",
+                data: {unitid: unitid},
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //将数据封装进html 中
+                    var html = '<table class="map_search-result-table"><tbody>';
+                    html +='<tr><td>预警类型</td><td>预警名称</td></tr>';
+                    for (var i = 0; i < data.length; i ++) {
+                        if(data[i].type == 1){
+                            var type = "系统预警";
+                        }
+                        else if(data[i].type == 2){
+                            var type = "任务预警";
+                        }
+                        html += '<tr><td>'+type+'</td> <td>'+data[i].typename+'</td></tr>';
+                    }
+                    html += '</tbody></table>';
+
+                    $('#waring_result_detail').empty();
+                    $("#waring_result_detail").append(html);
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+        window.parent.mapwarning_iframe.unit_location_and_show(unit_data);
+    }
+    //end 查询结果列表中单位的点击事件
+</script>
+
+

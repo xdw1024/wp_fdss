@@ -1,0 +1,264 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+        #allmap{height:100%;width:100%;}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=DD279b2a90afdf0ae7a3796787a0742e"></script>
+    <title>城市名定位</title>
+</head>
+<body>
+<div id="allmap"></div>
+<!--start初始化数据-->
+<input type="hidden" id="x_point" value="{$x_point}">
+<input type="hidden" id="y_point" value="{$y_point}">
+<input type="hidden" id="cityName" value="{$cityName}">
+<input type="hidden" id="points" value="{$points}">
+<input type="hidden" id="person_points" value="{$person_points}">
+<!--end 初始化数据-->
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    //var map = new BMap.Map("allmap");
+    var map = new BMap.Map("allmap",{enableMapClick: false});//去掉地图原有地点的点击事件
+    var point = new BMap.Point(108.296402,22.844226);
+    map.centerAndZoom(point,18);
+    map.enableScrollWheelZoom(true);//鼠标滚轮可缩放地图
+
+    var opts = {offset: new BMap.Size(0, 0)} //定义偏移坐标
+    map.addControl(new BMap.NavigationControl(opts));//导航坐标
+    map.addControl(new BMap.OverviewMapControl(opts));//缩略图
+    map.addControl(new BMap.MapTypeControl({offset: new BMap.Size(0, 0)}));//地图类型
+    map.addControl(new BMap.ScaleControl({offset: new BMap.Size(0, 50)}));//添加控件（比例尺），并将空件偏移
+
+    var current_zone_polygon;//当前查询区域
+    //var cityName = '广西壮族自治区';
+    var cityName = '恭城瑶族自治县';
+    // start 页面初始加载
+    setTimeout(function(){ //全局轮廓
+        //alert('只加载一次！');
+        getBoundary(cityName);
+    }, 1);
+
+    // start 行政区域显示
+    function getBoundary(cityName){
+        var bdary = new BMap.Boundary();
+        bdary.get(cityName, function(rs){       //获取行政区域
+            map.clearOverlays();        //清除地图覆盖物
+            var count = rs.boundaries.length; //行政区域的点有多少个
+            if (count === 0) {
+                alert('未能获取当前输入行政区域');
+                return ;
+            }
+            var pointArray = [];
+            for (var i = 0; i < count; i++) {
+                var ply = new BMap.Polygon(rs.boundaries[i], {strokeWeight: 3, strokeColor: "#ff0000"}); //建立多边形覆盖物
+                ply.setFillOpacity(0.1);//设置填充背景透明度
+                current_zone_polygon = ply;
+                map.addOverlay(ply);  //添加覆盖物
+                pointArray = pointArray.concat(ply.getPath());
+            }
+            map.setViewport(pointArray);    //调整视野
+        });
+    }
+    // end 行政区域显示
+
+    //start 自定义区域显示
+    function  getBoundaryMy(zone_points) {
+        map.clearOverlays();//清除图层
+        var points=eval("("+zone_points+")");
+        var polygon = new BMap.Polygon(points, {strokeColor:"#888877", strokeWeight:3, strokeOpacity:1});  //创建多边形
+        polygon.setFillOpacity(0.1);//设置填充背景透明度
+        polygon.setStrokeStyle('dashed');//设置边线样式(虚线)
+        current_zone_polygon = polygon;
+        map.addOverlay(polygon);   //增加多边形
+        map.setViewport(polygon.getPath());    //调整视野
+    }
+    //end 自定义区域显示
+
+    //start 显示自定义区域2
+    function  getBoundaryMy2() {
+
+        var polygon = new BMap.Polygon([
+            new BMap.Point(108.289494,22.860636),
+            new BMap.Point(108.289854,22.839988),
+            new BMap.Point(108.299052,22.836724),
+            new BMap.Point(108.318743,22.84565),
+            new BMap.Point(108.310335,22.858971),
+            new BMap.Point(108.289351,22.860636),
+            new BMap.Point(108.289351,22.860636),
+            new BMap.Point(108.289351,22.860636),
+            new BMap.Point(108.289351,22.860636)
+        ], {strokeColor:"red", strokeWeight:3, strokeOpacity:1});  //创建多边形
+        polygon.setFillOpacity(0.1);//设置填充背景透明度
+        map.addOverlay(polygon);   //增加多边形
+        map.setViewport(polygon.getPath());    //调整视野
+
+        var point = new BMap.Point(108.2966,22.844243);
+        var point2 = new BMap.Point(108.326882,22.840583);
+        if(isPointInPolygon(point2,polygon)){
+            alert("该point在circle内");
+        }
+        else{
+            alert("不在");
+        }
+    }
+    //end 显示自定义区域2
+
+    //start 创建覆盖物的文字标签
+    function addLable(content) {
+        var label = new BMap.Label(content,{offset:new BMap.Size(20,-10)});
+        return label;
+    }
+    //end 创建覆盖物的文字标签
+
+    //start 创建地图标注
+    function addMarkerAutoSize(point,content,icon,size){
+        var iconSize = new BMap.Size(size,size);
+        var iconOption = {
+            imageSize:iconSize
+        };
+        var myIcon = new BMap.Icon("__UPLOAD_IMGE__/"+icon+"", iconSize,iconOption);
+        //myIcon.setImageSize(iconSize);
+        var marker = new BMap.Marker(point,{icon:myIcon});
+        map.addOverlay(marker);
+        //var content="sss";
+        addClickHandler(content,marker);
+        return marker;
+    }
+    //end 创建地图标注
+
+    //start 创建地图标注
+    function addMarker(point,content,icon){
+        var iconSize = new BMap.Size(20,20);
+        var iconOption = {
+            imageSize:iconSize
+        };
+        var myIcon = new BMap.Icon("__UPLOAD_IMGE__/"+icon+"", iconSize,iconOption);
+        //myIcon.setImageSize(iconSize);
+        var marker = new BMap.Marker(point,{icon:myIcon});
+        map.addOverlay(marker);
+        //var content="sss";
+        addClickHandler(content,marker);
+    }
+    //end 创建地图标注
+
+    /**
+     * 地图上显示详情
+     * @author yxf
+     */
+    //start 创建详情点击事件
+    function addClickHandler(content,marker){
+        marker.addEventListener("click",function(e){
+            openInfo(content,e)}
+        );
+    }
+    //end 创建详情点击事件
+
+    //信息窗口显示详情
+    function openInfo(content,e){
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow,point); //开启信息窗口
+    }
+    //信息窗口显示详情
+
+    /**
+     * start 查询列表点击单位，在地图上定位并显示
+     * @author xdw
+     * @param data
+     */
+    function unit_location_and_show(unit){
+        if(unit.usnickname == null){
+            var usnickname = "未分配";
+        }else{
+            var usnickname = unit.usnickname;
+        }
+        var content = "名称："+unit.name+"</br>地址："+unit.addr+"</br>类型："+unit.unittype+"</br>检查人："+usnickname+"</br>视频通话：<a href='#'>000-0000</a>";//设置单位详情信息窗口显示内容
+        var point = new BMap.Point(unit.x_coord, unit.y_coord);
+        map.centerAndZoom(point,18);
+        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+        map.openInfoWindow(infoWindow,point); //开启信息窗口
+    }
+    /** end 查询列表点击单位，在地图上定位并显示*/
+
+    /**
+     * start 轨迹回放
+     * @param person_points
+     */
+    function run_back_history(person_points,person_name) {
+
+        map.clearOverlays();
+
+        if(person_points == '' ){
+            alert("没有轨迹记录！");
+            return;
+        }
+        var min = person_points[0];
+        var max = person_points[person_points.length-1];
+        var i = 0;
+        var pts = []; //人员轨迹点
+        person_points.forEach(function(e){
+            pts[i] = new BMap.Point(e.x_coord, e.y_coord),
+            i++;
+        });
+
+        var myP1 = new BMap.Point(min.x_coord,min.y_coord);    //起点
+        var myP2 = new BMap.Point(max.x_coord,max.y_coord);    //终点
+        var iconSize = new BMap.Size(30,30);
+        var anchor = new BMap.Size(15,25);
+        var iconOption = {
+            imageSize:iconSize,
+            anchor:anchor
+        };
+        var startIcon = new BMap.Icon("__UPLOAD_IMGE__/tool_icon/1起点.png", iconSize, iconOption );
+        var endIcon = new BMap.Icon("__UPLOAD_IMGE__/tool_icon/2终点.png", iconSize, iconOption );
+        map.addOverlay(new BMap.Marker(myP1,{icon:startIcon}));
+        map.addOverlay(new BMap.Marker(myP2,{icon:endIcon}));
+
+        //小车图片
+        var myIcon = new BMap.Icon("__UPLOAD_IMGE__/person_icon/p01.png", new BMap.Size(32, 70), {
+            //offset: new BMap.Size(0, -5),    //相当于CSS精灵
+            imageOffset: new BMap.Size(0, 0)    //图片的偏移量。为了是图片底部中心对准坐标点。
+        });
+
+        //用人员轨迹点创建折线轨迹
+        var polyline = new BMap.Polyline(pts, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});
+        map.addOverlay(polyline);
+        map.setViewport(pts);    //调整视野
+
+        //start 轨迹动画
+        window.run = function (){
+            var paths = pts.length;    //获得有几个点
+            var carMk = new BMap.Marker(pts[0],{icon:myIcon});
+            var person_name_lable = addLable(person_name);
+            carMk.setLabel(person_name_lable);
+            map.addOverlay(carMk);
+            i=0;
+            function resetMkPoint(i){
+                carMk.setPosition(pts[i]);
+                if(i < paths){
+                    setTimeout(function(){
+                        i++;
+                        resetMkPoint(i);
+                    },100);
+                }
+            }
+            setTimeout(function(){
+                resetMkPoint(1);
+            },100)
+        }
+        //end 轨迹动画
+
+        setTimeout(function(){
+            run();
+        },1000);
+
+    }
+    /** end 轨迹回放 */
+
+</script>

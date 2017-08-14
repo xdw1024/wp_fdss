@@ -1,0 +1,75 @@
+<div class="pageContent">
+    <form method="post" action="__ADMIN__Unit_Type/saveinfo" enctype="multipart/form-data" class="pageForm required-validate" onsubmit="return iframeCallback(this, dialogAjaxDone);" >
+        <div class="pageFormContent" layoutH="56">
+            <input type="hidden" id="id" name="id" value="{$info.id}">
+            <input type="hidden" id="level" name="level" value="{$info.level}">
+            <input type="hidden" id="path" name="path" value="">
+            <p>
+                <label>单位类型：</label>
+                <input name="name" class="required" type="text" size="30" value="{$info.name}" alt="请输入单位类型" />
+            </p>
+            <p>
+                <label>上一级类型：</label>
+                <select class="my_combox combox" id="parent_id" name="parent_id" onchange="func()">
+                    <option value="" >请选择类型</option>
+                    {volist name="unit_type_info" id="lasttype" key="k"}
+                    {eq name="$info.parent_id" value="$lasttype.id"}<option value="{$lasttype.id}"  level="{$lasttype.level}" path="{$lasttype.path}"  selected="selected" >{$lasttype.name}</option>
+                    {else/}
+                    <option value="{$lasttype.id}" level="{$lasttype.level}" path="{$lasttype.path}" >{$lasttype.name}</option>
+                    {/eq}
+                    {/volist}
+                </select>
+
+            </p>
+            <p>
+                <label>所属部门：</label>
+                <select class="my_combox combox" name="department_id">
+                    <option value="" >请选择部门</option>
+                    {volist name="department" id="type" key="k"}
+                    {eq name="$info.department_id" value="$type.id"}<option value="{$type.id}" selected="selected" >{$type.name}</option>
+                    {else/}
+                    <option value="{$type.id}" >{$type.name}</option>
+                    {/eq}
+                    {/volist}
+                </select>
+            </p>
+            <p>
+                {if $info.id == ''}
+                <label>上传图标：</label>
+                <input name="type_icon" type="file" />
+                {else}
+                <label>修改图标：</label>
+                <input name="type_icon" type="file" />
+                {/if}
+            </p>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                <li>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+<script>
+
+    function func(){
+        //获取被选中的option标签
+        var lastlevel =$("#parent_id option:selected").attr("level");
+        var lastpath =$("#parent_id option:selected").attr("path");
+        if(lastlevel){
+            var level = parseInt(lastlevel,10)+1;
+        }
+        else {
+            var lastlevel = 0;
+            var level = parseInt(lastlevel,10)+1;
+        }
+
+        $('#level').val(level);
+        $('#path').val(lastpath);
+    }
+
+
+</script>

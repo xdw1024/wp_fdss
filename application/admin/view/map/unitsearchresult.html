@@ -1,0 +1,101 @@
+<div id="unit_result" >
+
+
+</div>
+<script>
+    //start 查询结果列表中单位的点击事件
+    function detail_show(unit_data) {
+        //更新详细板块信息
+        //获取单位id
+        var unitid =unit_data.id;
+        //ajax 请求获取单位详细数据
+        get_unit_detail_info(unitid);
+        get_unit_check_record_info(unitid);
+
+        //单位的地图定位及显示详细信息
+        window.parent.map_iframe.unit_location_and_show(unit_data);
+    }
+    //end 查询结果列表中单位的点击事件
+
+    //start 获取单位详细信息
+    function get_unit_detail_info(unitid) {
+        $(document).ready(function() {
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map/getUnitdata",
+                data: {unitid: unitid},
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //将数据封装进html 中
+                    var html = '<table class="map_search-result-table"><tbody>';
+                    for (var i = 0; i < data.length; i ++) {
+                        if(data[i].data==null){
+                            var infodata = ' ';
+                        }else{
+                            var infodata = data[i].data;
+                        }
+                        html += '<tr><td>'+data[i].fname+'</td><td>'+infodata+'</td></tr>';
+                    }
+                    html += '</tbody></table>';
+
+                    $('#result_detail').empty();
+                    $("#result_detail").append(html);
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });//end ajax
+        });
+    }
+    //end 获取单位详细信息
+
+    //start 获取单位检查记录
+    function get_unit_check_record_info(unitid) {
+        $(document).ready(function () {
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map/getUnitcheckrecord",
+                data: {unitid: unitid},
+                dataType :'json',
+                success: function(data){
+                    //alert(unitid);
+                    console.log(data);
+                    //将数据封装进html 中
+                    var html = '<table class="map_search-result-table"><tbody>';
+                    html += '<tr><td>序号</td><td>检查时间</td><td>检查人员</td><td>检查结果</td></tr>';
+                    if(data.length>0){
+                        for (var i = 0; i < data.length; i ++) {
+                            if(data[i].standard_level == "0"){
+                                var check = "合格";
+                            }else if(data[i].standard_level == "1"){
+                                var check = "优秀";
+                            }else if(data[i].standard_level == "2"){
+                                var check = "良好";
+                            }else if(data[i].standard_level == "3"){
+                                var check = "不合格";
+                            }else{
+                                var check = "未检查";
+                            }
+                            var retime = data[i].checktime;
+                            var newDate = new Date();
+                            newDate.setTime(retime * 1000);
+                            var checktime = newDate.toLocaleDateString();
+                            html += '<tr><td>'+(i+1)+'</td><td>'+checktime+'</td><td>'+data[i].checkuser+'</td><td>'+check+'</td></tr>';
+                        }
+                    }else{
+                        html += '<tr><td>无</td><td>无</td><td>无</td><td>无</td></tr>';
+                    }
+                    html += '</tbody></table>';
+                    $('#result_check_record').empty();
+                    $("#result_check_record").append(html);
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+    }
+    //end  获取单位i检查记录
+
+</script>

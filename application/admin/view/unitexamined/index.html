@@ -1,0 +1,58 @@
+<form id="pagerForm" method="post" action="">
+    <input type="hidden" name="status" value="${param.status}">
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+</form>
+
+<div class="pageContent">
+    <table class="table" width="100%" layoutH="155">
+        <thead>
+        <tr align="center" >
+            <th width="20"  align="center" ></th>
+            <th width="80"  align="center" >单位名称</th>
+            <th width="80"  align="center" >单位类型</th>
+            <th width="80" >单位地址</th>
+            <th width="80"  align="center" >检查时间</th>
+            <!--<th width="80"  align="center" >检查人</th>-->
+            <th width="80"  align="center" >坐标审核</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr target="sid_unit" rel="{$data['unit_id']}">
+            <td>{$k + $numPerPage*($currentPage-1)}</td>
+            <!--<td>{$data['id']}</td>-->
+            <td>{$data['unit_name']}</td>
+            <td>{$data['unit_type_name']}</td>
+            <td>{$data['unit_addr']}</td>
+            <td>{if empty($data['time'])}{else}{$data['time']|date="Y-m-d H:i",###}{/if} </td>
+            <td><a href="__ADMIN__Unit_Examined/mapExamined?record_id={$data['id']}&unit_id={$data['unit_id']}&x_coord_new={$data['x_coord']}&y_coord_new={$data['y_coord']}" target="navTab" rel="unit_examined_detail" title="地理坐标" style="color:#3c8dbc;" >审核</a></td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    <div class="panelBar bottom-pagination">
+        <div class="pages">
+            <span>显示</span>
+                    <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+
+    </div>
+</div>
+
+<script>
+    $('.combox').val('{$numPerPage}');
+</script>

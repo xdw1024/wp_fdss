@@ -1,0 +1,151 @@
+<div id="mapwarning-index" class="pageContent div-absolute">
+    <!--start 地图-->
+    <div class="map-box">
+        <iframe id="mapwarning_iframe" name="mapwarning_iframe" src="__ADMIN__Map_Warning/showMap?x_point=&y_point=&init=1&warning_type=0" style="width: 100%;height:100%;"></iframe>
+    </div>
+    <!--end 地图-->
+    <!--start 查询板块-->
+
+    <div class="right_menu_banner">
+        <!--start 区域定位、搜索-->
+        <div class="padding_fix">
+            <ul>
+                <li class="city_title">
+                    <span class="font-bold">行政区域：</span>
+                    <!--<a id="waring_administrative_area2" href="__ADMIN__Map_Warning/getArea" target="dialog" rel="area_list" >选择乡镇</a>-->
+                    <a id="waring_administrative_area" href="__ADMIN__Map_Warning/getMyArea" target="dialog" rel="area_list" >选择区域</a>
+                    <!--<a id="test" href="#">选择乡镇</a>-->
+                </li>
+            </ul>
+            <ul>
+                <!--单位类型选择-->
+                <li>
+                    <span class="font-bold">查询类别：</span> <label><input type="checkbox" class="checkboxCtrl" group="unit_type" checked="checked" />全选 / 取消</label></br>
+                    {foreach $unit_type as $ut}
+                    <label class="type"><input type="checkbox" name="unit_type" value="{$ut.id}" checked="checked" /><img src="__UPLOAD_IMGE__/{$ut.icon}"/><span>{$ut.name}</span></label>
+                    {/foreach}
+                </li>
+            </ul>
+            <!--<ul class="search_box">-->
+                <!--<div style="clear: both"></div>-->
+                <!--<span>关键字:</span>-->
+                <!--<input id="keyWord" name="keyWord" type="text" style="width:205px; margin-left:3px;" />-->
+            <!--</ul>-->
+            <div style="clear: both;"></div>
+            <div class="divline"></div>
+            <ul>
+                <span style="float: left;margin-top: 5px;" class="font-bold" >预警类型：</span>
+                <select class="combox" id="CheckWarningType" name="CheckWarningType" style="margin-left:3px;" >
+                    <option value="0">全部预警</option>
+                    <option value="1">年度预警</option>
+                    <option value="2">月度预警</option>
+                    <option value="3">天数预警</option>
+                    <option value="4">任务预警</option>
+                </select>
+            </ul>
+            <div style="clear: both;"></div>
+            <ul id="TaskWarning" style="display:none" >
+                <span style="float: left;margin-top: 5px;" class="font-bold" >任务预警：</span>
+                <select class="combox" id="CheckTaskWarning" name="CheckTaskWarning" style="margin-left:3px;">
+                    <option value="0">全部预警</option>
+                    {foreach $warning_type as $wt}
+                    <option value="{$wt.id}">{$wt.name}</option>
+                    {/foreach}
+                </select>
+            </ul>
+            <div style="clear: both;"></div>
+            <div class="divline"></div>
+            <a class="button" id="warning_search_btn" href="javascript:;" style="float: right;" ><span>查询</span></a>
+            <div style="clear: both;"></div>
+        </div>
+        <!--end 区域定位、搜索-->
+
+        <!--start 搜索结果显示-->
+        <div class="search_result">
+            <div class="tabs" currentIndex="0" eventType="click">
+                <div class="tabsHeader">
+                    <div class="tabsHeaderContent">
+                        <ul>
+                            <li><a href="javascript:;"><span>搜索结果</span></a></li>
+                            <li><a href="javascript:;"><span>详细信息</span></a></li>
+                            <!--<li><a href="javascript:;" class="j-ajax"><span>视频通话</span></a></li>-->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="tabsContent" style="height:468px;">
+                <!--<div class="tabsContent" style="height:645px;">-->
+                    <!--start 搜索结果-->
+                    <div id="waring_result_block">
+                        {include file="mapwarning/unitsearchresult" /}
+                    </div>
+                    <!--end 搜索结果-->
+                    <!--start 详细信息-->
+                    <div id="waring_result_detail">
+                        <pre>
+
+                        </pre>
+                    </div>
+                    <!--edn 详细信息-->
+                    <!--<div></div>-->
+                </div>
+                <div class="tabsFooter">
+                    <div class="tabsFooterContent"></div>
+                </div>
+            </div>
+
+        </div>
+        <!--end 搜索结果显示-->
+    </div>
+    <!--end 查询板块-->
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        //显示预警任务类型
+        $('#CheckWarningType').change(function(){
+            ($("#CheckWarningType").val() == 4)?$("#TaskWarning").css("display","block"):$("#TaskWarning").css("display","none");
+        });
+
+        //start 单位的查询并描点
+        $("#warning_search_btn").on('click',function () {
+
+            //单位类型
+            var unit_type = '';
+            $("input[name='unit_type']:checkbox:checked").each(function () {
+                unit_type += $(this).val()+',';
+            });
+            //关键字
+            var CheckWarningType = $("#CheckWarningType").val();
+            var CheckTaskWarning = $("#CheckTaskWarning").val();
+            //获取单位集
+            $.ajax({
+                type: "post",
+                url: "__ADMIN__Map_Warning/getUnit",
+                data: "x_coord=123&y_coord=123&unit_type="+unit_type+"&warning_type="+CheckWarningType+"&task_warning="+CheckTaskWarning,
+                dataType :'json',
+                success: function(data){
+                    console.log(data);
+                    //start 刷新查询结果
+                    window.mapwarning_iframe.addUnit(data);
+                    //end 刷新查询结果
+                },
+                error: function(){
+                    alert('获取单位信息fail');
+                }
+            });
+        });
+        //end 单位的查询并描点
+
+    });
+
+    //start 更新单位查询列表
+    function addWarningUnitInfoList(html){
+        $("#warning_unit_result").empty();
+        $("#warning_unit_result").append(html);
+    }
+    //end 更新单位查询列表
+
+</script>

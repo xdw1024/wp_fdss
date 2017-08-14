@@ -1,0 +1,10 @@
+设置了 fds_unit 表中x_coord 和 y_coord 的默认值 0.00000
+改动表见 fds_unit.sql
+
+fds_check_record 表中添加字段 standard_level 字段 
+改动表见 fds_check_record.sql
+
+------------------------
+完整数据库见
+fdss.sql
+---------------------

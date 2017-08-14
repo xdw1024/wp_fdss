@@ -1,0 +1,86 @@
+<form id="pagerForm" method="post" action="__ADMIN__Admin/index">
+    <input type="hidden" name="status" value="${param.status}" />
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+</form>
+
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" action="__ADMIN__Admin/index" method="post">
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        查找人员：<input type="text" name="keyword" value="{$keyword}"/>
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>
+            <div class="subBar">
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="add" href="__ADMIN__Admin/edit" target="dialog" rel="admin_add" title="添加管理人员" ><span><i class="fa fa-plus-square"></i>&nbsp;添加</span></a></li>
+            <li><a class="delete" href="__ADMIN__Admin/removeinfo?uid={sid_admin}" target="ajaxTodo" title="确定要删除吗?"><span><i class="fa fa-minus-square"></i>&nbsp;删除</span></a></li>
+            <li><a class="edit" href="__ADMIN__Admin/edit?uid={sid_admin}" target="dialog" rel="admin_add"  title="修改管理人员" ><span><i class="fa fa-pencil-square"></i>&nbsp;修改</span></a></li>
+        </ul>
+    </div>
+    <table class="table" width="100%" layoutH="155">
+        <thead>
+        <tr>
+            <th width="20" align="center" ></th>
+            <th width="30" align="center" >帐号</th>
+            <th width="30" align="center" >姓名</th>
+            <th width="40" align="center" >Email</th>
+            <th width="40" align="center" >最近登录时间</th>
+            <th width="40" align="center" >登录IP</th>
+            <th width="40" align="center" >登录数</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr target="sid_admin" rel="{$data['id']}">
+            <td>{$k + $numPerPage*( $currentPage - 1)}</td>
+            <td>{$data['account']}</td>
+            <td>{$data['nickname']}</td>
+            <td>{$data['email']}</td>
+            <td>{if empty($data['last_login_time'])}{else}{$data['last_login_time']|date="Y-m-d H:i",###}{/if} </td>
+            <td>{$data['last_login_ip']}</td>
+            <td>{$data['login_count']}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    <div class="panelBar bottom-pagination">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="10" currentPage="{$currentPage}"></div>
+
+    </div>
+</div>
+
+<script>
+    $('.combox').val('{$numPerPage}');
+</script>

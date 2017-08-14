@@ -1,0 +1,107 @@
+<form id="pagerForm"  onsubmit="return divSearch(this, 'jbsxBox');" action="__ADMIN__Unit/unitList">
+    <input type="hidden" name="status" value="${param.status}">
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+    <input type="hidden" name="unit_type_id" value="{$unitTypeId}" />
+    <input type="hidden" name="unit_type_name" value="{$unitTypeName}" />
+    <div class="searchBar">
+        <table class="searchContent">
+            <tr>
+                <td>
+                    单位类型：{$unitTypeName}
+                </td>
+                <td>
+                    单位：<input type="text" name="keyword" value="{$keyword}"/>
+                </td>
+                <td>
+                    <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="add" href="__ADMIN__Unit/unitEdit?unit_type_id={$unitTypeId}" target="navTab" rel="unit_add" title="添加单位" ><span><i class="fa fa-plus-square"></i>&nbsp;添加</span></a></li>
+            <li><a class="delete" href="__ADMIN__Unit/unitDelete?uid={sid_unit}" target="ajaxTodo" title="确定要删除吗?"><span><i class="fa fa-minus-square"></i>&nbsp;删除</span></a></li>
+            <li><a class="edit" href="__ADMIN__Unit/unitEdit?unit_type_id={$unitTypeId}&uid={sid_unit}" target="navTab" rel="unit_add" title="编辑单位" ><span><i class="fa fa-pencil-square"></i>&nbsp;修改</span></a></li>
+            <li class="line">line</li>
+            <li><a class="icon" href="__ADMIN__Unit/unitUploadFile?unit_type_id={$unitTypeId}" target="dialog" rel="unit_improt" title="导入单位" ><span><i class="fa  fa-upload"></i>&nbsp;导入EXCEL</span></a></li>
+            <!--<li><a cbutton class="btn btn-primary" onclick="javascript:location.href='__ADMIN__Unit/unitDownload?unit_type_id={$unitTypeId}'"><span><i class="fa  fa-download"></i>&nbsp;导出EXCEL</span></a></li>-->
+            <li><a cbutton class="btn btn-primary" href="__ADMIN__Unit/unitExport?unit_type_id={$unitTypeId}"><span><i class="fa  fa-download"></i>&nbsp;导出EXCEL</span></a></li>
+        </ul>
+    </div>
+    <table id="ttt" class="table" width="100%" style="white-space: nowrap" layoutH="155" height="414px" rel="jbsxBox">
+        <thead>
+            <tr align="center" >
+                <th align="center"></th>
+                {volist name="unitInfoFields" id="data" key="k"}
+                    {switch name="data['data_type']" }
+                        {case value="text"}
+                        <th align="center" >{$data['name']}</th>
+                        {/case}
+                        {case value="texterea"}
+                        <th>{$data['name']}</th>
+                        {/case}
+                        {case value="datetime"}
+                        <th align="center" >{$data['name']}</th>
+                        {/case}
+                        {default /}<th align="center" >{$data['name']}</th>
+                    {/switch}
+                {/volist}
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="dataList" id="data" key="k"}
+            <tr target="sid_unit" rel="{$data['unit_id']}">
+
+                <td>{$k + $numPerPage*($currentPage-1)}</td>
+
+                {volist name="unitInfoFields" id="item" key="j" }
+                    {switch name="item['data_type']" }
+                        {case value="text"}
+                        <td>{$data[$item['short_name']]}</td>
+                        {/case}
+                        {case value="texterea"}
+                        <td>{$data[$item['short_name']]}</td>
+                        {/case}
+                        {case value="datetime"}
+                        <td>{php}echo $data[$item['short_name']] !=''?date('Y-m-d',$data[$item['short_name']]):''; {/php}</td>
+                        {/case}
+                        {default /}<td>{$data[$item['short_name']]}</td>
+                    {/switch}
+                {/volist}
+            </tr>
+            {/volist}
+        </tbody>
+    </table>
+    <div class="panelBar bottom-pagination">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox combox_select" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value}, 'jbsxBox')">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+
+        <div class="pagination" rel="jbsxBox" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+
+    </div>
+</div>
+
+<script>
+    $('.combox').val('{$numPerPage}');   
+	$('.table td').each(function(){
+		$(this).attr('title',$(this).text());
+	})	
+</script>

@@ -1,0 +1,65 @@
+<div id="unit_result" >
+    <!--<div class="unit_detail" >-->
+        <!--<p><a href="#" onclick="detail_show(11)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>好好学习</p>-->
+    <!--</div>-->
+    <!--<div class="unit_detail"  >-->
+        <!--<p><a href="#" onclick="detail_show(22)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>科学严谨</p>-->
+    <!--</div>-->
+    <!--<div class="unit_detail" >-->
+        <!--<p><a href="#" onclick="detail_show(33)" style="text-decoration:underline;color:blue ">'+units[i].name+'</a></p></br>-->
+        <!--<p>思维开阔</p>-->
+    <!--</div>-->
+</div>
+
+<script>
+    //start 查询结果列表中单位的点击事件
+    function detail_show(data) {
+        //更新详细板块信息
+        if(data.usnickname == null){
+            var usnickname = "未分配";
+        }else{
+            var usnickname = data.usnickname;
+        }
+        var html = '<p>名称：'+data.name+'</p>' +
+                '<p>地址：'+data.addr+'</p>' +
+                '<p>类型：'+data.unittype+'</p>' +
+                '<p>检查人：'+usnickname+'</p>' +
+                '<p>视频通话：<a href="#">000-0000</a></p>';
+        $('#personline_result_detail').empty();
+        $("#result_detail").append(html);
+        //单位的地图定位及显示详细信息
+        window.parent.personline_map_iframe.unit_location_and_show(data);
+    }
+    //end 查询结果列表中单位的点击事件
+</script>
+
+
+<!--<form id="pagerForm" method="post" action="__ADMIN__User/index">-->
+    <!--<input type="hidden" name="status" value="${param.status}">-->
+    <!--<input type="hidden" name="keywords" value="${param.keywords}" />-->
+    <!--<input type="hidden" name="pageNum" value="1" />-->
+    <!--<input type="hidden" name="numPerPage" value="${model.numPerPage}" />-->
+    <!--<input type="hidden" name="orderField" value="${param.orderField}" />-->
+<!--</form>-->
+
+<!--<div class="pageContent">-->
+    <!--<table class="table" width="100%" layoutH="50" >-->
+        <!--<tbody id="unit_result">-->
+            <!--&lt;!&ndash;<tr target="sid_user" rel="">&ndash;&gt;-->
+                <!--&lt;!&ndash;<td>好好学习</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+            <!--&lt;!&ndash;<tr target="sid_user" rel="">&ndash;&gt;-->
+                <!--&lt;!&ndash;<td>科学严谨</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+            <!--&lt;!&ndash;<tr target="sid_user" rel="">&ndash;&gt;-->
+                <!--&lt;!&ndash;<td>思维开阔</td>&ndash;&gt;-->
+            <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+        <!--</tbody>-->
+    <!--</table>-->
+    <!--<div class="panelBar">-->
+        <!--<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="3" currentPage="1"></div>-->
+    <!--</div>-->
+<!--</div>-->
+

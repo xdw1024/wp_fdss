@@ -1,0 +1,60 @@
+<div class="pageContent">
+    <form method="post" action="__ADMIN__Unit_Type/savefieldinfo" enctype="multipart/form-data" class="pageForm required-validate" onsubmit="return validateCallback(this, dialogAjaxDone);" >
+        <div class="pageFormContent" layoutH="56">
+            <input type="hidden" id="id" name="id" value="{$info.id}">
+            <input type="hidden" id="unit_type_id" name="unit_type_id" value="{$unit_type_id}">
+            <input type="hidden" id="field_data_type" name="data_type" value="{$info.data_type}">
+            <input type="hidden" id="field_requied" name="field_requied" value="{$info.required}">
+            <p>
+                <label>字段简称：</label>
+                <input name="short_name" class="required" type="text" size="30" value="{$info.short_name}" alt="" />
+            </p>
+            <p>
+                <label>字段标题：</label>
+                <input name="name" class="required" type="text" size="30" value="{$info.name}" alt="" />
+            </p>
+            <p>
+                <label>字段类型：</label>
+                <select class="my_combox combox" id="data_type" name="data_type" onchange="func()">
+                    <option value="text" >text</option>
+                    <option value="texterea" >texterea</option>
+                    <option value="datetime" >datetime</option>
+                    <option value="menu" >menu</option>
+                    <option value="checkbox" >checkbox</option>
+                </select>
+            </p>
+            <p>
+                <label>排序号：</label>
+                <input name="sortorder" class="required" type="text" size="30" value="{$info.sortorder}" alt="" />
+            </p>
+            <p>
+                <label>是否必填：</label>
+                <select class="my_combox combox" name="required" id="required">
+                    <option value="0" >否</option>
+                    <option value="1" >是</option>
+                </select>
+            </p>
+        </div>
+        <div class="formBar">
+            <ul>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                <li>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    $('#data_type').val('{$info.data_type}');
+    $('#required').val('{$info.required}');
+    if('{$info.data_type}'==''){
+        $('#data_type').val('text');
+    }
+    if('{$info.required}'==''){
+        $('#required').val('0');
+    }
+
+</script>

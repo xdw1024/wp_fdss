@@ -1,0 +1,112 @@
+<div class="pageContent">
+    <!--start 单位信息-->
+    <div  class="unit-edit">
+        <form method="post" action="__ADMIN__Unit/unitSaveInfo" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+            <div class="pageFormContent l-input-list" layoutH="20">
+                <input type="hidden" name="id" value="{$unitCoordinate.id}">
+                <input type="hidden" name="unit_type_id" value="{$unit_type_id}">
+
+                <!--start 字段遍历-->
+                {volist name="unitFieldDatas" id="data" key="k" }
+                    {switch name="data['data_type']" }
+                        {case value="text"}
+                        <dl class="nowrap">
+                            <p>
+                                <label>{$data['name']}：</label>
+                                <input name="{$data['short_name']}" class="{$data['required']?'required':''}" type="text" size="30" value="{$data['data']}" alt="" />
+                            </p>
+                        </dl>
+                        {/case}
+                        {case value="texterea"}
+                        <dl class="nowrap">
+                            <p>
+                                <label>{$data['name']}：</label>
+                                <textarea name="{$data['short_name']}" rows="3" class="{$data['required']?'required':''} textInput" type="textInput" size="30" value="{$data['data']}" alt="">{$data['data']}</textarea>
+                                <div style="clear: both"></div>
+                            </p>
+                        </dl>
+                        {/case}
+                        {case value="datetime"}
+                        <dl class="nowrap date">
+                            <p>
+                                <label>{$data['name']}：</label>
+                                <a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>
+                                <input name="{$data['short_name']}" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="{php}echo $data['data']!=''?date('Y-m-d',$data['data']):''; {/php}" />
+                            </p>
+                        </dl>
+                        {/case}
+                        {default /}<label>{$data['name']}：</label>
+                                    <input type="text" size="30" value="" alt="" />
+
+                    {/switch}
+                {/volist}
+                <!--end 字段遍历-->
+
+                <!--start 原html保留参考-->
+                <!--<hr/>-->
+                <!--<dl class="nowrap">-->
+                    <!--<p>-->
+                        <!--<label>单位名称：</label>-->
+                        <!--<input name="name" class="required" type="text" size="30" value="" alt="请输入单位名称" />-->
+                    <!--</p>-->
+                <!--</dl>-->
+                <!--<dl class="nowrap">-->
+                    <!--<p>-->
+                        <!--<label>单位地址：</label>-->
+                        <!--<input name="addr" class="required" type="text" size="30" value="" alt="请输入单位所在地，具体到门牌号"/>-->
+                    <!--</p>-->
+                <!--</dl>-->
+                <!--<dl class="nowrap">-->
+                    <!--<p>-->
+                        <!--<label>诊疗科目：</label>-->
+                        <!--<input name="udiagnosissubject" class="required" type="text" size="30" value="" alt="请输入单位包含诊疗科目"/>-->
+                    <!--</p>-->
+                <!--</dl>-->
+                <!--<dl class="nowrap date">-->
+                    <!--<p>-->
+                        <!--<label>证书有效期：</label>-->
+                        <!--<a class="inputDateButton" href="javascript:;"><i class="fa fa-calendar"></i></a>-->
+                        <!--<input id="validityperiod2" name="validityperiod" class="date" type="text" dateFmt="yyyy-MM-dd" minDate="{%y-3}-%M-%d" readonly="true" value="" />-->
+                    <!--</p>-->
+                <!--</dl>-->
+                <!--end 原html保留参考-->
+
+                <dl class="nowrap">
+                    <p style="padding-left: 20px; font-weight: bold;">地图定位（请在地图中点击单位所在点）：</p></br>
+                    <p><label>纬度：</label><input name="x_coord" id="x_point" class="required" type="text" size="30" value="{$unitCoordinate.x_coord}" readonly="true" /></p></br>
+                    <p><label>经度：</label><input name="y_coord" id="y_point" class="required" type="text" size="30" value="{$unitCoordinate.y_coord}" readonly="true" /></p>
+                    <p><label>所属区域：</label>
+                        <select class="" name="zone_id" id="zone_id">
+                            <option value="" >请选择单位所属区域</option>
+                            {volist name="zone" id="data" key="k" }
+                            <option value="{$data['id']}" {$unitCoordinate.zone_id==$data['id']?'selected="selected"':''} >{$data['name']}</option>
+                            {/volist}
+                        </select>
+                    </p>
+                </dl>
+                <div class="clearfix"></div>
+				<div class="form-btn-box">                    
+                    <div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div>
+                    <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                </div>
+            </div>
+
+            <!--start 地图-->
+            <div class="r-map" layoutH="1">
+                <iframe src="__ADMIN__Unit/unitMap?x_point={$unitCoordinate.x_coord}&y_point={$unitCoordinate.y_coord}" style="width: 99.7%;height:99.7%;"></iframe>
+            </div>
+            <!--end 地图-->
+
+            <!--div class="formBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                    <li>
+                        <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                    </li>
+                </ul>
+            </div-->
+        </form>
+    </div>
+    <!--end 单位信息-->
+
+</div>

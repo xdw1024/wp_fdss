@@ -1,0 +1,27 @@
+<div id="person_unit_result" >
+</div>
+
+<script>
+    //start 查询结果列表中单位的点击事件
+    function person_detail_show(data) {
+        //更新详细板块信息
+        if(data.username == null){
+            var username = "未分配";
+        }else{
+            var username = data.username;
+        }
+        var html = '<table class="map_search-result-table"><tbody>' +
+                '<tr><td>名称：</td><td>'+data.username+'</td></tr>' +
+                '<tr><td>编号：</td><td>'+data.account+'</td></tr>' +
+                '</tbody></table>';
+        $('#person_result_detail').empty();
+        $("#person_result_detail").append(html);
+        //单位的地图定位及显示详细信息
+        window.parent.mapperson_iframe.person_location_and_show(data);
+    }
+    //end 查询结果列表中单位的点击事件
+</script>
+
+
+
+

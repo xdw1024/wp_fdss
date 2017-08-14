@@ -1,0 +1,41 @@
+<style>
+    .sel_close {display: block;float: left;width: auto;margin-right: 30px;margin-bottom: 10px;font-size: 14px}
+    .sel_close_all {font-weight: bold;font-size: 16px}
+</style>
+<div class="pageContent">
+
+    <div style="height: 250px;    padding: 0px 0px 0px 10px;">
+    <ul>
+    <li>
+        </br><a class="sel_close_all" href="#" data_name="恭城瑶族自治县" data_points="" >恭城瑶族自治县</a>
+    </li></br>
+    {foreach $area_info as $key=>$value }
+        <a class="sel_close" href="#" data_name="{$key}" data_points="{$value}" >{$key}</a>
+    {/foreach}
+    </ul>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        //start 选择并关闭的当前弹出窗
+        $(".sel_close").on('click',function () {
+            var zone_name = $(this).attr('data_name');
+            var zone_points = $(this).attr('data_points');
+            $('#administrative_area').text(zone_name);
+            window.mapperson_iframe.getBoundaryMy(zone_points);//重新加载地图
+            $.pdialog.closeCurrent();
+        });
+        //end 选择并关闭的当前弹出窗
+
+        //start 选择并关闭的当前弹出窗
+        $(".sel_close_all").on('click',function () {
+            var zone_name = $(this).attr('data_name');
+            $('#administrative_area').text(zone_name);
+            window.mapperson_iframe.getBoundary(zone_name);//重新加载地图
+            $.pdialog.closeCurrent();
+        });
+        //end 选择并关闭的当前弹出窗
+    });
+</script>
+

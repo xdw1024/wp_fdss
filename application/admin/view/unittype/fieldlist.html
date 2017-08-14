@@ -1,0 +1,42 @@
+<form id="pagerForm" method="post" action="">
+    <input type="hidden" name="status" value="${param.status}">
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="unit_type_id" value="{$unit_type_id}" />
+</form>
+
+<div class="pageContent">
+    <div class="panelBar">
+        <ul class="toolBar">
+            <li><a class="add" href="__ADMIN__Unit_Type/fieldedit?unit_type_id={$unit_type_id}" target="dialog" rel="unit_type_add" title="添加单位字段" ><span><i class="fa fa-plus-square"></i>&nbsp;添加</span></a></li>
+            <li><a class="delete" href="__ADMIN__Unit_Type/removefieldinfo?fid={id_unit_field}" target="ajaxTodo" title="将关联删除单位的相关字段！确定要删除吗?"><span><i class="fa fa-minus-square"></i>&nbsp;删除</span></a></li>
+            <li><a class="edit" href="__ADMIN__Unit_type/fieldedit?unit_type_id={$unit_type_id}&fid={id_unit_field}" target="dialog" rel="unit_type_add" title="编辑单位字段" ><span><i class="fa fa-pencil-square"></i>&nbsp;修改</span></a></li>
+            <li class="line">line</li>
+        </ul>
+    </div>
+    <table class="table" width="100%" layoutH="155">
+        <thead>
+        <tr>
+            <th width="20"  align="center" ></th>
+            <th width="80"  align="center" >字段简称</th>
+            <th width="80"  align="center" >字段标题</th>
+            <th width="80"  align="center" >字段类型</th>
+            <th width="80"  align="center" >排序号</th>
+            <th width="80"  align="center" >是否必填</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr target="id_unit_field" rel="{$data['id']}">
+            <td>{$k}</td>
+            <td>{$data['short_name']}</td>
+            <td>{$data['name']}</td>
+            <td>{$data['data_type']}</td>
+            <td>{$data['sortorder']}</td>
+            <td>{$data['required']?'是':'否'}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+</div>

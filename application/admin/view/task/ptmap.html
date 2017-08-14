@@ -1,0 +1,133 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body, html{width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
+        #allmap{height:750px;width:100%;}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=DD279b2a90afdf0ae7a3796787a0742e"></script>
+    <title>人员轨迹回放</title>
+</head>
+<body>
+<div id="allmap"></div>
+<!--start初始化数据-->
+<input type="hidden" id="x_point" value="${x_point}">
+<input type="hidden" id="y_point" value="${y_point}">
+<!--end 初始化数据-->
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");
+    var point = new BMap.Point(110.834891,24.837219);
+    map.centerAndZoom(point,18);
+    map.enableScrollWheelZoom(true);//鼠标滚轮可缩放地图
+    var opts = {offset: new BMap.Size(0, 0)} //定义偏移坐标
+    map.addControl(new BMap.NavigationControl(opts));//导航坐标
+    map.addControl(new BMap.OverviewMapControl(opts));//缩略图
+    map.addControl(new BMap.MapTypeControl(opts));//地图类型
+    map.addControl(new BMap.ScaleControl({offset: new BMap.Size(5, 35)}));//添加控件（比例尺），并将空件偏移
+
+    /** start 轨迹回放 */
+    var myP1 = new BMap.Point(110.831841,24.837248);    //起点
+    var myP2 = new BMap.Point(110.835659,24.839158);    //终点
+    var startIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/Mario.png", new BMap.Size(32, 70), {imageOffset: new BMap.Size(0, 0)});
+    var endIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/Mario.png", new BMap.Size(32, 70), {imageOffset: new BMap.Size(0, 0)});
+    map.addOverlay(new BMap.Marker(myP1,{icon:startIcon}));
+    map.addOverlay(new BMap.Marker(myP2,{icon:endIcon}));
+
+    //小车图片
+    var myIcon = new BMap.Icon("http://developer.baidu.com/map/jsdemo/img/Mario.png", new BMap.Size(32, 70), {
+        //offset: new BMap.Size(0, -5),    //相当于CSS精灵
+        imageOffset: new BMap.Size(0, 0)    //图片的偏移量。为了是图片底部中心对准坐标点。
+    });
+
+    //start 人员轨迹点
+    var pts = [
+            new BMap.Point(110.831841,24.837248),
+            new BMap.Point(110.831904,24.837178),
+            new BMap.Point(110.831909,24.837162),
+            new BMap.Point(110.831927,24.837133),
+            new BMap.Point(110.832025,24.837039),
+            new BMap.Point(110.832088,24.836965),
+            new BMap.Point(110.832142,24.836879),
+            new BMap.Point(110.832232,24.836789),
+            new BMap.Point(110.832322,24.836666),
+            new BMap.Point(110.832362,24.836596),
+            new BMap.Point(110.832488,24.836465),
+            new BMap.Point(110.832605,24.836326),
+            new BMap.Point(110.832726,24.83619),
+            new BMap.Point(110.832843,24.836256),
+            new BMap.Point(110.832996,24.836354),
+            new BMap.Point(110.833112,24.836436),
+            new BMap.Point(110.833283,24.836531),
+            new BMap.Point(110.833409,24.836617),
+            new BMap.Point(110.833562,24.836736),
+            new BMap.Point(110.833714,24.836838),
+            new BMap.Point(110.833912,24.836928),
+            new BMap.Point(110.834096,24.836949),
+            new BMap.Point(110.834276,24.836961),
+            new BMap.Point(110.834671,24.836973),
+            new BMap.Point(110.834819,24.83699),
+            new BMap.Point(110.835008,24.836977),
+            new BMap.Point(110.83508,24.836994),
+            new BMap.Point(110.835237,24.836986),
+            new BMap.Point(110.835318,24.836977),
+            new BMap.Point(110.835443,24.836981),
+            new BMap.Point(110.835538,24.836973),
+            new BMap.Point(110.835533,24.837145),
+            new BMap.Point(110.835551,24.837301),
+            new BMap.Point(110.835556,24.837457),
+            new BMap.Point(110.83556,24.8376),
+            new BMap.Point(110.835569,24.837748),
+            new BMap.Point(110.835587,24.837838),
+            new BMap.Point(110.835596,24.83792),
+            new BMap.Point(110.835605,24.838019),
+            new BMap.Point(110.835605,24.8381),
+            new BMap.Point(110.835614,24.838195),
+            new BMap.Point(110.835641,24.838281),
+            new BMap.Point(110.835646,24.838424),
+            new BMap.Point(110.835646,24.838564),
+            new BMap.Point(110.835641,24.838699),
+            new BMap.Point(110.83565,24.838818),
+            new BMap.Point(110.835659,24.83892),
+            new BMap.Point(110.835668,24.839035),
+            new BMap.Point(110.835659,24.839158),
+            new BMap.Point(110.835659,24.839158),
+            new BMap.Point(110.835659,24.839158),
+            new BMap.Point(110.835659,24.839158)
+    ];
+    //end 人员轨迹点
+
+    //用人员轨迹点创建折线轨迹
+    var polyline = new BMap.Polyline(pts, {strokeColor:"blue", strokeWeight:2, strokeOpacity:0.5});
+    map.addOverlay(polyline);
+
+    //start 轨迹动画
+    window.run = function (){
+        var paths = pts.length;    //获得有几个点
+        var carMk = new BMap.Marker(pts[0],{icon:myIcon});
+        map.addOverlay(carMk);
+        i=0;
+        function resetMkPoint(i){
+            carMk.setPosition(pts[i]);
+            if(i < paths){
+                setTimeout(function(){
+                    i++;
+                    resetMkPoint(i);
+                },100);
+            }
+        }
+        setTimeout(function(){
+            resetMkPoint(5);
+        },100)
+    }
+    //end 轨迹动画
+
+    setTimeout(function(){
+        run();
+    },1000);
+    /** end 轨迹回放 */
+
+</script>

@@ -1,0 +1,76 @@
+<form id="pagerForm" method="post" action="__ADMIN__UserTask/index">
+    <input type="hidden" name="status" value="${param.status}" />
+    <input type="hidden" name="keywords" value="${param.keywords}" />
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="keyword" value="{$keyword}" />
+</form>
+<div id="usertask-index">
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" action="__ADMIN__UserTask/index" method="post">
+        <div class="searchBar">
+            <table class="searchContent">
+                <tr>
+                    <td>
+                        查找人员：<input type="text" name="keyword" value="{$keyword}"/>
+                    </td>
+                    <td>
+                        <div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+                    </td>
+                </tr>
+            </table>
+            <div class="subBar">
+                <ul>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+    <table class="table" width="100%" layoutH="155">
+        <thead>
+        <tr>
+            <th width="20"></th>
+            <th width="20">编号</th>
+            <th width="30">帐户</th>
+            <th width="20">姓名</th>
+            <th width="20">任务</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr target="sid_user" rel="{$data['id']}">
+            <td>{$k + $numPerPage*( $currentPage - 1)}</td>
+            <td>{$data['id']}</td>
+            <td>{$data['account']}</td>
+            <td>{$data['nickname']}</td>
+            <td width="40"><a class="checktask" href="__ADMIN__Usertask/showtask?tid={$data['id']}" target="navTab" rel="showtask" title="{$data['nickname']}负责的任务">查看</a></td>
+          </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar bottom-pagination">
+        <div class="pages">
+            <span>显示</span>
+            <select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+
+        <div class="pagination" targetType="navTab" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="10" currentPage="{$currentPage}"></div>
+
+    </div>
+</div>
+</div>
+<script>
+    $('.combox').val('{$numPerPage}');
+</script>

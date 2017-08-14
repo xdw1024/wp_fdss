@@ -1,0 +1,169 @@
+<form id="pagerForm"  rel="pagerForm" method="post" action="__ADMIN__Task/selectTaskUnit">
+    <input type="hidden" name="pageNum" value="1" />
+    <input type="hidden" name="numPerPage" value="{$numPerPage}" />
+    <input type="hidden" name="orderField" value="${param.orderField}" />
+    <input type="hidden" name="orderDirection" value="${param.orderDirection}" />
+    <input type="hidden" name="keyword" value="{$keyword}"/>
+    <input type="hidden" name="unit_type_id" value="{$unit_type_id}"/>
+    <input type="hidden" id="checkunit" name="checkunit" value="{$checkunit}"/>
+    <input type="hidden" id="checkunitname" name="checkunitname" value="{$chkunitname}"/>
+</form>
+
+<div class="pageHeader">
+    <form rel="pagerForm" method="post" action="__ADMIN__Task/selectTaskUnit" onsubmit="return dwzSearch(this, 'dialog');">
+        <input type="hidden"  name="checkunit" value="{$checkunit}"/>
+        <input type="hidden"  name="checkunitname" value="{$chkunitname}"/>
+        <div class="searchBar">
+            <ul class="searchContent">
+                <li>
+                    <label>部门名称:</label>
+                    <input class="textInput" name="keyword" value="{$keyword}" type="text">
+                </li>
+                <td>
+                    <select class="combox" id="unit_type_id" name="unit_type_id">
+                        <option value="">所有类型</option>
+                        {volist name="typelist" id="data" key="k"}
+                        <option value="{$data['id']}" {$unit_type_id==$data['id']?'selected="selected"':''}  >{$data['name']}</option>
+                        {/volist}
+                    </select>
+                </td>
+            </ul>
+            <div class="subBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">查询</button></div></div></li>
+                    <!--<li><div class="button"><div class="buttonContent"><button type="button" multLookup="name" warn="请选择部门">选择带回</button></div></div></li>-->
+                    <li><button type="button" onclick="chkunitfun()">选择带回</button></li>
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="pageContent">
+
+    <table class="table" layoutH="118" targetType="dialog" width="100%">
+        <thead>
+        <tr>
+            <th width="30"><input id="tkid" type="checkbox" class="checkboxCtrl chkunitname" group="name" /></th>
+            <th></th>
+            <th orderfield="name">单位名称</th>
+            <th orderfield="addr">所属区域</th>
+            <th orderfield="type">单位类型</th>
+        </tr>
+        </thead>
+        <tbody>
+        {volist name="datalist" id="data" key="k"}
+        <tr>
+            <td><input class="chkunitname" type="checkbox" id="{$data['id']}" name="name" value="{$data['name']}"/></td>
+            <td>{$k+$numPerPage*($currentPage-1)}</td>
+            <td>{$data[\'name\']}</td>
+            <td>{$data[\'addr\']}</td>
+            <td>{$data[\'unittype\']}</td>
+        </tr>
+        {/volist}
+        </tbody>
+    </table>
+
+    <div class="panelBar">
+        <div class="pages">
+            <span>每页</span>
+
+            <select  class="combox_dialog" name="numPerPage" onchange="dialogPageBreak({numPerPage:this.value})">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>条，共{$totalCount}条</span>
+        </div>
+        <div class="pagination" targetType="dialog" totalCount="{$totalCount}" numPerPage="{$numPerPage}" pageNumShown="5" currentPage="{$currentPage}"></div>
+    </div>
+</div>
+<script>
+    $('.combox_dialog').val('{$numPerPage}');
+    var data = $("input[name='checkunit']").val();
+    var unitdata = $("input[name='checkunitname']").val();
+    //初始化选择状态
+    $(document).ready(function(){
+        var r = $("input[name='checkunit']").val();
+        var boxes = document.getElementsByName("name");
+        var result = r.split(",");
+        setTimeout(function(){ //全局轮廓
+            for(var j=0;j<boxes.length;j++){
+                for(var i=0;i<result.length;i++){
+                    if(boxes[j].id == result[i]){
+                        boxes[j].checked = true;
+                        break
+                    }
+                }
+            }
+        }, 100);
+    });
+
+    //初始化存储数组
+    if(data == ""){
+        var checkedIds= [];
+    }else{
+        var checkedIds= data.split(",");
+    }
+    if(unitdata == ""){
+        var checkedNames= [];
+    }else{
+        var checkedNames= unitdata.split(",");
+    }
+
+    /* 将选中的数据ID保存*/
+    $(document).on("change",".chkunitname",function(){
+        $(".chkunitname").each(function () {
+            if(this.checked){
+                if (contains(checkedIds, this.id) == true) {
+                } else {
+                    if(this.name == "name"){
+                        checkedIds.push(this.id);
+                        checkedNames.push(this.value);
+                    }
+                }
+            }else{
+                if (contains(checkedIds, this.id) == true) {
+                    removeByValue(checkedIds,this.id);
+                    removeByValue(checkedNames,this.value);
+                } else {
+                }
+            }
+        });
+        var chkunitid = checkedIds.toString();
+        var chkunitname = checkedNames.toString();
+        $("input[name='checkunit']").val(chkunitid);
+        $("input[name='checkunitname']").val(chkunitname);
+
+    });
+
+    //判断元素是否在数组中
+    function contains(arr, obj) {
+        var i = arr.length;
+        while (i--) {
+            if (arr[i] === obj) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //删除数组元素
+    function removeByValue(arr, val) {
+        for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+    //data return
+    function chkunitfun() {
+        var ckunitid = $("input[name='checkunit']").val();
+        var ckunitname = $("input[name='checkunitname']").val();
+        $('#chkunitid').val(ckunitid);
+        $('#ckunitname').val(ckunitname);
+        $.pdialog.closeCurrent();
+    }
+</script>

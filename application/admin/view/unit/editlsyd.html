@@ -1,0 +1,150 @@
+<style>
+    .pageFormContent label {text-align: right}
+    .pageFormContent .alt {text-align: left}
+</style>
+<div class="pageContent">
+    <!--start 单位信息-->
+    <div style="width: 100%;float: left;">
+        <form method="post" action="__ADMIN__Unit/saveinfo" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+            <div class="pageFormContent" layoutH="56" style="float: left;width: 30%;height: 100%">
+                <input type="hidden" name="id" value="{$info.id}">
+                <dl class="nowrap">
+                    <p>
+                        <label>单位名称：</label>
+                        <input name="name" class="required" type="text" size="30" value="{$info.organization_name}" alt="请输入单位名称" />
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>社会诚信代码：</label>
+                        <input name="yljgdjh" class="required" type="text" size="30" value="{$info.business_license}" alt="请输入单位社会诚信代码"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>单位地址：</label>
+                        <input name="addr" class="required" type="text" size="30" value="{$info.addr}" alt="请输入单位所在地，具体到门牌号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>法定代表人：</label>
+                        <input name="legalperson" class="required" type="text" size="30" value="{$info.legal_person}" alt="请输入单位负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>企业负责人：</label>
+                        <input name="leadername" class="required" type="text" size="30" value="{$info.leader_name}" alt="请输入单位负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>企业负责人执业药师注册证号：</label>
+                        <input name="leadermark" class="required" type="text" size="30" value="{$info.leadermark}" alt="请输入单位执业药师注册证号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>质量负责人：</label>
+                        <input name="qualityleader" class="required" type="text" size="30" value="{$info.quality_leader}" alt="请输入质量负责人"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>处方审核员：</label>
+                        <input name="recipeauditor" class="required" type="text" size="30" value="{$info.recipe_auditor}" alt="请输入处方审核员"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>处方审核员执业药师注册证号：</label>
+                        <input name="recipeauditormark" class="required" type="text" size="30" value="{$info.recipe_auditor_mark}" alt="请输入处方审核员执业药师注册证号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>经营范围：</label>
+                        <input name="businessscope" class="required" type="text" size="30" value="{$info.business_scope}" alt="请输入经营范围"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>经营方式：</label>
+                        <input name="businesstype" class="required" type="text" size="30" value="{$info.business_type}" alt="请输入经营方式"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>药品经营许可证及GSP证书编号：</label>
+                        <input name="businessmark" class="required" type="text" size="30" value="{$info.business_mark}" alt="请输入药品经营许可证及GSP证书编号"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>最新发证日期：</label>
+                        <input name="marktime" class="required" type="text" size="30" value="{$info.marktime}" alt="请输入最新发证日期"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>两证有效期：</label>
+                        <input name="validityperiod" class="required" type="text" size="30" value="{$info.period_of_validity}" alt="请输入两证有效期"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>联系电话：</label>
+                        <input name="phone" class="required" type="text" size="30" value="{$info.phone}" alt="请输入联系电话"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>备注：</label>
+                        <input name="remarks" class="required" type="text" size="30" value="{$info.remarks}" alt="请输入备注"/>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p style="padding-left: 20px; font-weight: bold;">地图定位（请在地图中点击单位所在点）：</p></br>
+                    <p><label>纬度：</label><input name="x_coord" id="x_point" class="required" type="text" size="30" value="{$info.x_coord}" readonly="true" /></p></br>
+                    <p><label>经度：</label><input name="y_coord" id="y_point" class="required" type="text" size="30" value="{$info.y_coord}" readonly="true" /></p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>单位类型：</label>
+                        <select class="" name="type" >
+                            {volist name="unit_type_info" id="type" key="k"}
+                            {eq name="$info.type" value="$type.id"}<option value="{$type.id}" selected="selected" >{$type.name}</option>
+                            {else/} <option value="{$type.id}" >{$type.name}</option>
+                            {/eq}
+                            {/volist}
+                        </select>
+                    </p>
+                </dl>
+                <dl class="nowrap">
+                    <p>
+                        <label>信  息：</label>
+                        <textarea style="width: 218px" name="info" cols="60" rows="6" alt="请输入单位相关信息" >{$info.info}</textarea>
+                    </p>
+                </dl>
+            </div>
+
+            <!--start 地图-->
+            <div style="width:69%;float: right;height: 800px">
+                <iframe src="__ADMIN__Unit/unitMap?x_point={$info.x_coord}&y_point={$info.y_coord}" style="width: 100%;height:100%;"></iframe>
+            </div>
+            <!--end 地图-->
+
+            <div class="formBar">
+                <ul>
+                    <li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+                    <li>
+                        <div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+    <!--end 单位信息-->
+
+</div>
